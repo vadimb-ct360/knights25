@@ -1,0 +1,25 @@
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+*.dSYM
+# SwiftPM
+.build/
+# CocoaPods (if you use it)
+Pods/
+# Carthage
+Carthage/Build/
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+# Logs
+*.log
+# User-specific
+*.xcuserdatad
+# Temporary
+*.swp
+.DS_Store

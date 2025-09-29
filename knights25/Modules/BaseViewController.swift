@@ -1,0 +1,55 @@
+//
+//  BaseViewController.swift
+//  knights25
+//
+//  Created by Vadim Bashurov on 25.09.2025.
+//
+
+
+// Base/BaseViewController.swift
+import UIKit
+import GoogleMobileAds
+
+class BaseViewController: UIViewController, BannerViewDelegate {
+    private var bannerView: BannerView?
+   
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupAdBanner()
+    }
+    
+   
+    private func setupAdBanner() {
+        let banner = BannerView(adSize: AdSizeBanner) // temporary size; we’ll set adaptive size below
+        banner.adUnitID = "ca-app-pub-3940256099942544/2934735716"   // TODO: your banner unit id
+        banner.rootViewController = self
+        banner.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(banner)
+        let g = view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            banner.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+            banner.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        print("Load AdMob banner")
+        bannerView = banner
+        banner.load(Request())
+        updateAdaptiveBannerSize()
+    }
+    
+    private func updateAdaptiveBannerSize() {
+        guard let banner = bannerView else { return }
+        // Safe-area width for adaptive anchored banner
+        let frame = view.frame.inset(by: view.safeAreaInsets)
+        let width = frame.size.width
+        banner.adSize = currentOrientationAnchoredAdaptiveBanner(width: width)
+    }
+  
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateAdaptiveBannerSize()
+        if let banner = bannerView {
+            view.bringSubviewToFront(banner)
+        }
+    }
+}
