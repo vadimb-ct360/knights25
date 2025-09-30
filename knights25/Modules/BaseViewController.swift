@@ -21,7 +21,7 @@ class BaseViewController: UIViewController, BannerViewDelegate {
    
     private func setupAdBanner() {
         let banner = BannerView(adSize: AdSizeBanner) // temporary size; we’ll set adaptive size below
-        banner.adUnitID = "ca-app-pub-3940256099942544/2934735716"   // TODO: your banner unit id
+        banner.adUnitID = "ca-app-pub-3793510413673173/5434020692"   // TODO: your banner unit id
         banner.rootViewController = self
         banner.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(banner)
