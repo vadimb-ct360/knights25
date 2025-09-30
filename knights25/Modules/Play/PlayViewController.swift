@@ -31,6 +31,7 @@ final class PlayViewController: BaseViewController {
     
     private let scoreLabel = UILabel()
     private let scorePill = UIView()
+    private let dropsPill = UIView()
     private let clock = UIImageView(image: UIImage(named: "clock"))
     private let coin = UIImageView(image: UIImage(named: "coin"))
     private let bombButton = UIButton(type: .custom)
@@ -60,13 +61,7 @@ final class PlayViewController: BaseViewController {
     init(viewModel: PlayViewModel) { self.viewModel = viewModel; super.init(nibName: nil, bundle: nil) }
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
-    private let backgroundImageView: UIImageView = {
-        let iv = UIImageView(image: UIImage(named: "bg"))
-        iv.contentMode = .scaleAspectFill   // fills screen, crops if needed
-        iv.isUserInteractionEnabled = false // so it won't block taps
-        iv.translatesAutoresizingMaskIntoConstraints = false
-        return iv
-    }()
+    private let backgroundImageView = UIImageView()
     
     private let bgImageView: UIImageView = {
         let iv = UIImageView(image: UIImage(named: "board"))
@@ -143,6 +138,11 @@ final class PlayViewController: BaseViewController {
     
     private func setupUI() {
         view.backgroundColor = .systemPink
+        let ln = 1 + viewModel.state.level.num % 10
+        backgroundImageView.image = UIImage(named: "bg_\(ln)")
+        backgroundImageView.contentMode = .scaleAspectFill
+        backgroundImageView.isUserInteractionEnabled = false
+        backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(backgroundImageView)
         NSLayoutConstraint.activate([
             backgroundImageView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -184,6 +184,16 @@ final class PlayViewController: BaseViewController {
         scorePill.layer.cornerCurve = .continuous
         scorePill.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scorePill)
+        
+        dropsPill.backgroundColor = UIColor(cgColor: CGColor(red: 1, green: 0.75, blue: 0.35, alpha: 1))
+        
+        dropsPill.layer.cornerRadius = 23
+        dropsPill.layer.cornerCurve = .continuous
+        dropsPill.translatesAutoresizingMaskIntoConstraints = false
+        topRow.addSubview(dropsPill)
+   
+        
+        
         renderBonus(state.bonus)
         bonusLabel.textColor = .brown
         bonusLabel.layer.masksToBounds = true
@@ -206,10 +216,10 @@ final class PlayViewController: BaseViewController {
         
         clock.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(clock)
-        clock.alpha = 0.75
+    //    clock.alpha = 0.75
         
         
-        movesNumberLabel.textColor = UIColor.white
+        movesNumberLabel.textColor = UIColor.brown
         movesNumberLabel.textAlignment = .center
         movesNumberLabel.text = "10"             // numbers only
         movesNumberLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -230,14 +240,14 @@ final class PlayViewController: BaseViewController {
         
         
         view.bringSubviewToFront(boardView)
-        view.bringSubviewToFront(topRow)
+    //    view.bringSubviewToFront(topRow)
         
         
         
         // Drops stack (right-aligned)
         dropsStack.axis = .horizontal
         dropsStack.alignment = .center
-        dropsStack.spacing = 4
+        dropsStack.spacing = 2
         dropsStack.translatesAutoresizingMaskIntoConstraints = false
         topRow.addSubview(dropsStack)
         
@@ -253,7 +263,7 @@ final class PlayViewController: BaseViewController {
         }
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
-        spacer.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        spacer.widthAnchor.constraint(equalToConstant: 105).isActive = true
         dropsStack.insertArrangedSubview(spacer, at: NUMDROPS-2)
         
         
@@ -278,12 +288,17 @@ final class PlayViewController: BaseViewController {
             
             // Top row beneath score
             topRow.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: -57),
-            topRow.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 35),
-            topRow.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: 85),
+            topRow.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 25),
+            topRow.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: 80),
             
+            dropsPill.centerYAnchor.constraint(equalTo: topRow.centerYAnchor ),
+            dropsPill.centerXAnchor.constraint(equalTo: g.centerXAnchor ),
+            dropsPill.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 1.4),
+            dropsPill.widthAnchor.constraint(equalTo: g.widthAnchor, multiplier: 0.6),
+     
             
             clock.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 12),
-            clock.centerYAnchor.constraint(equalTo: scorePill.centerYAnchor, constant: -3 ),
+            clock.centerYAnchor.constraint(equalTo: scorePill.centerYAnchor ),
             clock.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 2.0),
             
             clock.widthAnchor.constraint(equalTo: clock.heightAnchor),
@@ -333,7 +348,7 @@ final class PlayViewController: BaseViewController {
         
         colorsStack.axis = .horizontal
         colorsStack.alignment = .center
-        colorsStack.spacing = 2
+        colorsStack.spacing = 0
         colorsStack.translatesAutoresizingMaskIntoConstraints = false
         colorsStrip.addSubview(colorsStack)
         
@@ -363,7 +378,7 @@ final class PlayViewController: BaseViewController {
         let iconSize: CGFloat = 19
         for i in 1...numColors {
             let iv = UIImageView(image: knightImage(i))
-            iv.contentMode = .scaleAspectFit
+            iv.contentMode = .scaleAspectFill
             iv.translatesAutoresizingMaskIntoConstraints = false
             iv.widthAnchor.constraint(equalToConstant: iconSize).isActive = true
             iv.heightAnchor.constraint(equalToConstant: iconSize).isActive = true
@@ -511,13 +526,8 @@ final class PlayViewController: BaseViewController {
     
     
     func renderBonus(_ bns: Int) {
-        if state.allowFreeMove {
-            bonusLabel.textColor = .brown
-            bonusLabel.text = "🧡 \(bns)"
-        } else {
-            bonusLabel.textColor = .black
-            bonusLabel.text = "🖤 \(bns)"
-        }
+        bonusLabel.textColor = state.allowFreeMove ? .red : .black
+        bonusLabel.text = "♥︎\(bns)"  //🖤♡
     }
     
     func playPink() {
@@ -548,12 +558,15 @@ final class PlayViewController: BaseViewController {
                 playSound("alarm")
             }
             clock.image = UIImage(named: "clock_alarm")!
+            movesNumberLabel.textColor = UIColor.yellow
             if moves<=1 {
                 _ = dropSlots.map({$0.alpha = 0})
             }
         } else {
             clock.image = UIImage(named: "clock")!
+            movesNumberLabel.textColor = UIColor.white
         }
+        topRow.alpha = state.remainingMoves>1 ? 1.0 : 0
     }
     
     
@@ -569,6 +582,8 @@ final class PlayViewController: BaseViewController {
         clearDragHighlights()
         pulsingMergeTargets.removeAll()
         title = "Level \(s.level.num)"
+        backgroundImageView.image = UIImage(named: "bg_\((s.level.imageNum))")
+  
         
         renderDrops(s.level.drops)
         render(state: s)
@@ -668,7 +683,7 @@ final class PlayViewController: BaseViewController {
         let v = KnightView(colorId: id, index: pos)
         v.image = knightImage(id)
         v.isUserInteractionEnabled = true
-        v.contentMode = .scaleAspectFit
+        v.contentMode = .scaleToFill
         v.frame = frameForCell(pos.0, pos.1)
         
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
@@ -866,7 +881,7 @@ final class PlayViewController: BaseViewController {
             let color = drops[i]
             let slot = dropSlots[i]
             slot.image = knightImage(color)
-            slot.alpha = state.remainingMoves>1 ? 1.0 : 0.0
+            slot.alpha = 1.0
             slot.transform = .identity
         }
     }
@@ -1225,10 +1240,10 @@ final class PlayViewController: BaseViewController {
     
     // MARK: - Helpers
     private func frameForCell(_ r: Int, _ c: Int) -> CGRect {
-        let pad: CGFloat = 0.9
+        let pad: CGFloat = 0.95
         let s = cellSize > 0 ? cellSize : (boardView.bounds.width / CGFloat(NUMROW))
         
-        return CGRect(x: CGFloat(c) * s, y: CGFloat(r) * s, width: s*pad, height: s*pad)
+        return CGRect(x: CGFloat(c) * s, y: CGFloat(r) * s, width: s, height: s*pad)
     }
     
     private func indexForPoint(_ p: CGPoint) -> (r:Int,c:Int)? {

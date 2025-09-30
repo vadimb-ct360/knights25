@@ -15,7 +15,8 @@ struct Level: Equatable, Codable {
     var totalBestScore = 0
     var todayBestScore = 0
     var drops: [Int]
-    
+    var imageNum: Int { num % 2 == 1 ? 1 : 2 + num % 12 }
+ 
     init(for num: Int) {
         let n = num-1
         let colors: [Int] =  [

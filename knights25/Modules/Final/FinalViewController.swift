@@ -186,7 +186,7 @@ final class FinalViewController: BaseViewController {
         
         view.backgroundColor = .systemBackground
         
-        bg.image = UIImage(named: "bg2")
+        bg.image = UIImage(named: "bg_0")
         
         bg.contentMode = .scaleAspectFill
         bg.translatesAutoresizingMaskIntoConstraints = false

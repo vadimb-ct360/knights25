@@ -21,7 +21,7 @@ final class LevelViewController: BaseViewController {
     private let movesLabel  = UILabel()
     private let continueBtn = UIButton(type: .system)
     private let colorsStrip = UIView()
-    private let circle = UIView()
+    private let colorsPill = UIView()
     private let colorsStack = UIStackView()
     private let bg = UIImageView()
   
@@ -41,8 +41,8 @@ final class LevelViewController: BaseViewController {
     private func loadBG() {
         view.backgroundColor = .systemBackground
    
-        bg.image = UIImage(named: "bg")
-        
+        bg.image = UIImage(named: "bg_\(vm.nextLevel.imageNum)")
+     
         bg.contentMode = .scaleAspectFill
         bg.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(bg)
@@ -76,43 +76,39 @@ final class LevelViewController: BaseViewController {
         scorePill.layer.cornerRadius = 120
         scorePill.layer.cornerCurve = .continuous
     
-        circle.backgroundColor = .brown.withAlphaComponent(0.35)
-        circle.layer.cornerRadius = 120
-        circle.layer.cornerCurve = .continuous
-        circle.layer.shadowColor = UIColor.black.withAlphaComponent(0.15).cgColor
-        circle.layer.shadowOpacity = 1
-        circle.layer.shadowRadius = 8
-        circle.layer.shadowOffset = .zero
-    
+      
         // Bonus image
         imageView.contentMode = .scaleAspectFit
-        let num = 1 + (vm.level.num-1) % 15
+        let num =  (vm.level.num-1) % 16
         imageView.image = UIImage(named: "level_\(num)")
         imageView.layer.magnificationFilter = .nearest
 
         // next  Level title
         let nextNum = vm.nextLevel.num
        
-
+        colorsPill.backgroundColor = UIColor(cgColor: CGColor(red: 0.85, green: 0.55, blue: 0.25, alpha: 0.9))
+        colorsPill.layer.cornerRadius = 40
+        colorsPill.layer.cornerCurve = .continuous
+     
       
         // NEW: Next level description
         statusLabel.text = vm.nextLevelDescription
         statusLabel.textAlignment = .center
-        statusLabel.font = AppFont.font(17, weight: .light)
-        statusLabel.textColor = .black
+        statusLabel.font = AppFont.font(21, weight: .semibold)
+        statusLabel.textColor = .white
         
         movesLabel.text = "\(vm.nextLevel.moveQuota) moves to go"
         movesLabel.textAlignment = .center
-        movesLabel.font = AppFont.font(17, weight: .light)
-        movesLabel.textColor = .black
+        movesLabel.font = AppFont.font(21, weight: .semibold)
+        movesLabel.textColor = .white
       
      
         let raw = UIImage(named: "button_2")!
-        let bg  = raw.resizableImage(withCapInsets: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2),
+        let bg  = raw.resizableImage(withCapInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0),
                                      resizingMode: .stretch)
 
         var config = UIButton.Configuration.plain()
-        config.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
+        config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 12, trailing: 8)
         
         config.attributedTitle = AttributedString("Level \(nextNum)",
                 attributes: .init([.font: AppFont.font(27, weight: .bold),
@@ -132,10 +128,10 @@ final class LevelViewController: BaseViewController {
                 bgView.trailingAnchor.constraint(equalTo: continueBtn.trailingAnchor),
             ])
 
-        
+      
       
        
-        [scorePill, bestLabel, circle, imageView, statusLabel, movesLabel, continueBtn].forEach {
+        [scorePill, colorsPill, bestLabel,  imageView, statusLabel, movesLabel, continueBtn].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false; view.addSubview($0)
         }
         scorePill.addSubview(scoreLabel)
@@ -167,23 +163,25 @@ final class LevelViewController: BaseViewController {
             bestLabel.topAnchor.constraint(equalTo: scorePill.bottomAnchor, constant: 6),
             bestLabel.centerXAnchor.constraint(equalTo: scorePill.centerXAnchor),
        
-            circle.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            circle.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 15),
-            circle.widthAnchor.constraint(equalTo: g.widthAnchor, multiplier: 0.75),
-            circle.heightAnchor.constraint(equalTo: circle.widthAnchor),
-        
+           
             
             imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: circle.centerYAnchor),
+            imageView.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 32),
             imageView.widthAnchor.constraint(lessThanOrEqualTo: g.widthAnchor, multiplier: 0.6),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
         
+         
+            statusLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 2),
+            statusLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+            movesLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 28),
+            movesLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+
           
-          
-            continueBtn.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -80),
+            continueBtn.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -50),
             continueBtn.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            continueBtn.widthAnchor.constraint(equalToConstant: 200),
-            continueBtn.heightAnchor.constraint(equalToConstant: 80),
+            continueBtn.heightAnchor.constraint(equalToConstant: 70),
+  
+            continueBtn.widthAnchor.constraint(equalTo:continueBtn.heightAnchor, multiplier: 3.0),
     ])
     }
     
@@ -210,7 +208,7 @@ final class LevelViewController: BaseViewController {
         NSLayoutConstraint.activate([
             // Centered, not full-width
             colorsStrip.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            colorsStrip.bottomAnchor.constraint(equalTo: continueBtn.topAnchor, constant: -8),
+            colorsStrip.topAnchor.constraint(equalTo: movesLabel.bottomAnchor, constant: 20),
             
             // Keep some margins if it grows wide
             colorsStrip.leadingAnchor.constraint(greaterThanOrEqualTo: g.leadingAnchor, constant: 20),
@@ -222,12 +220,16 @@ final class LevelViewController: BaseViewController {
             colorsStack.leadingAnchor.constraint(equalTo: colorsStrip.leadingAnchor, constant: 20),
             colorsStack.trailingAnchor.constraint(equalTo: colorsStrip.trailingAnchor, constant: -20),
             
-            movesLabel.bottomAnchor.constraint(equalTo: colorsStrip.topAnchor, constant: -6),
-            movesLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
           
             
-            statusLabel.bottomAnchor.constraint(equalTo: movesLabel.topAnchor, constant: -4),
-            statusLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+           
+            
+             
+            colorsPill.topAnchor.constraint(equalTo: imageView.topAnchor, constant: -15),
+            colorsPill.bottomAnchor.constraint(equalTo: colorsStrip.bottomAnchor, constant: 20),
+            colorsPill.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: -32),
+            colorsPill.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 32),
+       
     
         ])
         
@@ -254,12 +256,10 @@ final class LevelViewController: BaseViewController {
     func updateRadiuses() {
         colorsStrip.layoutIfNeeded()
         colorsStrip.layer.cornerRadius = colorsStrip.bounds.height / 2
-        circle.layoutIfNeeded()
-        circle.layer.cornerRadius = circle.bounds.height / 2
         
         scorePill.layoutIfNeeded()
         scorePill.layer.cornerRadius = scorePill.bounds.height / 2
-      
+     
    
     }
     
@@ -309,7 +309,9 @@ final class LevelViewController: BaseViewController {
             UIView.transition(with: self.statusLabel, duration: 0.2, options: .transitionCrossDissolve) {
                 self.statusLabel.text = self.vm.nextLevelDescription
                 self.scoreLabel.text = "\(self.vm.totalScore) / \(self.vm.bestLevelScore)"
-            
+                self.colorsPill.layoutIfNeeded()
+                self.colorsPill.layer.cornerRadius = self.colorsPill.bounds.width / 4
+           
             }
         }
     }
