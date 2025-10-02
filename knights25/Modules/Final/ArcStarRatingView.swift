@@ -113,6 +113,6 @@ final class ArcStarRatingView: UIView {
         let h = sagitta + starSize.height * 1.1
         // Full width: make it equal to our super’s width if possible; fallback to chord + padding
         let w = max(deviceWidth, chord + starSize.width)
-        return CGSize(width: w, height: w)
+        return CGSize(width: w, height: h)
     }
 }

@@ -38,8 +38,8 @@ final class FinalViewController: BaseViewController {
     }
     
     func updateRadiuses() {
-   //     circle.layoutIfNeeded()
-   //     circle.layer.cornerRadius = circle.bounds.height / 2
+        nameLabel.layoutIfNeeded()
+        nameLabel.layer.cornerRadius = nameLabel.bounds.height / 2
     }
     
     func loadUI() {
@@ -56,12 +56,12 @@ final class FinalViewController: BaseViewController {
         
         
         
-        levelLabel.text = "Levels cleared: \(vm.summary.levelsCleared) /  \(vm.lMax)"
+        levelLabel.text = "👻 Levels cleared: \(vm.summary.levelsCleared) /  \(vm.lMax)"
         levelLabel.font = AppFont.font(21, weight: .semibold)
         levelLabel.textAlignment = .center
         levelLabel.textColor = vm.summary.levelsCleared >= vm.lMax ? .red : .secondaryLabel
         
-        bonusLabel.text = "Bonuses: \(vm.summary.bonus) /  \(vm.bMax)"
+        bonusLabel.text = "♥︎ Bonuses: \(vm.summary.bonus) /  \(vm.bMax)"
         
         bonusLabel.font = AppFont.font(21, weight: .semibold)
         bonusLabel.textAlignment = .center

@@ -6,6 +6,20 @@
 //
 
 final class HelpViewModel {
-    var onDismiss: (() -> Void)?
-    func close() { onDismiss?() }
+    var sound: Bool
+    let text : [String] = [
+        "How to play Knights game",
+        "Move knights in L-shape jumping over other knights",
+        "Clear all knights of single color to get brush bomb",
+        "Keep 30 levels of difficulty and reach last knight mode",
+        "Use free jump in safety levels",
+        "Try to get 10000 points and 100 bonuses",
+        "Keep out upper rows in Diablo levels",
+        "",
+        "",
+     ]
+    init(sound: Bool) {
+        self.sound = sound
+    }
+  
 }

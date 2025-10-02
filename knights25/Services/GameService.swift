@@ -36,8 +36,9 @@ protocol GameService {
     func spawnOneDrop(from index: Int, to state: inout GameState) -> (Int, Int)
     
  
-    func  shiftDrops(to state: inout GameState) 
-    
+    func shiftDrops(to state: inout GameState)
+    func clear13(for state: inout GameState) -> Int
+ 
     func isValidMove(in state: GameState, from: (Int,Int), to: (Int,Int)) -> Int
     func validTargets(from: (Int,Int), in state: GameState) -> (merges: [(Int,Int)], bombEmpties: [(Int,Int)])
     func checkEnd(in state: GameState) -> Bool
@@ -62,7 +63,6 @@ final class DefaultGameService: GameService {
     @discardableResult
     func applyMergeBonus(for color: Int, to state: inout GameState) -> Int
     {
-   //     guard state.remainingMoves>1 else { return 0 }
         
         
         // Count only the specified color and remember its last position
@@ -204,13 +204,15 @@ final class DefaultGameService: GameService {
     }
     
     
-    func bombTapped(to state: inout GameState) {
+    func bombTapped(to state: inout GameState)  {
+        var numShift = 0
         let rand = Int.random(in: 1...state.level.numColors)
-        state.score += state.bonus
+        var numc = 0
         
         for r in 0..<state.board.count {
             for c in 0..<state.board[r].count where state.board[r][c] > 0 {
                 state.board[r][c] = rand
+                numc += 1
             }
         }
         
@@ -221,12 +223,32 @@ final class DefaultGameService: GameService {
                 let b = state.board[r][c]
                 let d = state.board[r+1][c]
                 if b>0 && d==0 && flag {
+                    numShift += 1
                     flag = false
                     state.board[r+1][c] = b
                     state.board[r][c] = 0
                 }
             }
         }
+        
+        if numc == 2 && Int.random(in: 0...2)>0 {
+            var r1 = 0
+            var c1 = 0
+            for r in 0..<state.board.count {
+                for c in 0..<state.board[r].count where state.board[r][c] > 0 {
+                    r1 = r
+                    c1 = c
+                    state.board[r][c] = 0
+                }
+            }
+            
+            state.board[r1][c1] = 6
+            state.board[r1>2 ? r1-2 : r1 + 2][c1>1 ? c1-1 : c1 + 1] = 6
+       
+            
+        }
+        state.score += numc + numShift*(state.level.num)
+     
     }
     
     
@@ -273,6 +295,20 @@ final class DefaultGameService: GameService {
     
     func isGameOver(_ state: GameState) -> Bool { false }
     
+    
+    func clear13(for state: inout GameState) -> Int {
+        guard state.level.diablo>0 else { return 0 }
+        var nc = 0
+        for r in 0..<state.level.diablo {
+            for c in 0..<state.board[r].count where state.board[r][c] > 0 {
+                nc += 1
+                state.board[r][c] = 0
+            }
+        }
+        return nc
+        
+    }
+ 
     @discardableResult
     func spawnOneDrop(from index: Int, to state: inout GameState) -> (Int, Int) {
         var empties: [(Int, Int)] = []

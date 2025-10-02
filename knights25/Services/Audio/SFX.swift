@@ -14,7 +14,7 @@ final class SFX {
     private let queue = DispatchQueue(label: "SFX.pool")
 
     func preload() {
-        ["merge_1","merge_2","merge_3","drop","shift","score","click","bomb","level","alarm","final", "sling", "end", "clear", "pink"].forEach { _ = warm($0) }
+        ["merge_1","merge_2","merge_3","drop","shift","score","click","bomb","level","alarm","final", "sling", "end", "clear", "pink", "stolen"].forEach { _ = warm($0) }
     }
 
     func play(_ name: String, volume: Float = 1.0) {

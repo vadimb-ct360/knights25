@@ -14,9 +14,11 @@ struct Level: Equatable, Codable {
     var bestScore = 0
     var totalBestScore = 0
     var todayBestScore = 0
+    var icon: String = "level_2"
+    var ground: String = "bg_1"
     var drops: [Int]
-    var imageNum: Int { num % 2 == 1 ? 1 : 2 + num % 12 }
- 
+    var diablo: Int { num==12 ? 1 : num==13 ? 2 : num==26 ? 3 : 0}
+   
     init(for num: Int) {
         let n = num-1
         let colors: [Int] =  [
@@ -24,20 +26,38 @@ struct Level: Equatable, Codable {
             3,4,2,3,2,
             3,2,3,4,2,
             3,2,3,4,2,
-            3,2,3,4,2,
+            3,2,3,2,2,
             3,2,3,2,2,
             3,2,3,2,3,
- ]
+        ]
         let numColors = n<colors.count ? colors[n] :  2
         
         let moves = [
-            15,20,20,15,50,
-            20,20,20,20,15,
-            10,10,10,10,15,
-            10,10,10,10,15,
-            10,10,15,20,15,
-            15,20,15,10,10]
+            15,20,20,15,64,
+            20,20,15,10,15,
+            10,10,20,10,15,
+            10,15,10,20,15,
+            10,10,10,10,10,
+            10,10,10,10,10]
         
+        let gNum = [
+            13, 2, 1, 1, 3,
+            4, 12, 5, 10, 6,
+            1,14,14, 7, 1,
+            1, 1, 1, 1, 1,
+            1, 8, 11, 9, 12,
+            14, 2, 13, 3, 9,
+        ]
+
+        let iNum = [
+            0, 1, 2, 2, 3,
+            4, 5, 6, 7, 8,
+            9,29,31, 19, 21,
+            12, 13, 14,  6, 16,
+            17, 18, 10, 20, 12,
+            30, 22, 23, 24, 18,
+        ]
+
         let moveQuota: Int = n<moves.count ? moves[n] : 10
         var drops = (0..<10).map { _ in Int.random(in: 1...numColors) }
         
@@ -57,8 +77,12 @@ struct Level: Equatable, Codable {
         self.moveQuota = moveQuota
         self.numColors = numColors
         self.isBonus = (num != 13)
-        self.isCleaning = (num>20 && num<28) || num==3 || num==4
+        self.isCleaning = (num>14 && num<22) || num==3 || num==4
         self.drops = drops
+        self.ground = n<gNum.count ? "bg_\(gNum[n])" : "bg_1"
+        self.icon = n<iNum.count ? "level_\(iNum[n])" : "level_2"
+    
+        
     }
     
 }

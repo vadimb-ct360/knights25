@@ -36,7 +36,7 @@ final class PlayViewController: BaseViewController {
     private let coin = UIImageView(image: UIImage(named: "coin"))
     private let bombButton = UIButton(type: .custom)
     private let bombLabel  = UILabel()
-    private let lastColorKnight = UIImageView()
+    private let lastColorKnight = UIButton(type: .custom)
     private let lastColorImage = UIImageView()
     private let lastColorLabel  = UILabel()
     
@@ -124,6 +124,11 @@ final class PlayViewController: BaseViewController {
     }
     
     
+    @objc private func helpTapped() {
+        // route via VM -> Coordinator.showHelp()
+        viewModel.exitToHelp()
+    }
+    
     @objc private func bestTapped() {
         // route via VM -> Coordinator.showBest()
         let a = UIAlertController(title:"Escape game?", message:"View Today Best Scores And Restart Game", preferredStyle:.alert)
@@ -131,15 +136,14 @@ final class PlayViewController: BaseViewController {
         a.addAction(UIAlertAction(title:"OK", style:.destructive){ _ in self.viewModel.exitToBest() })
         present(a, animated:true)
     }
-    
+  
     @objc private func soundTapped() {
         viewModel.toggleSound()
     }
     
     private func setupUI() {
         view.backgroundColor = .systemPink
-        let ln = 1 + viewModel.state.level.num % 10
-        backgroundImageView.image = UIImage(named: "bg_\(ln)")
+        backgroundImageView.image = UIImage(named: "bg_1")
         backgroundImageView.contentMode = .scaleAspectFill
         backgroundImageView.isUserInteractionEnabled = false
         backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -191,7 +195,7 @@ final class PlayViewController: BaseViewController {
         dropsPill.layer.cornerCurve = .continuous
         dropsPill.translatesAutoresizingMaskIntoConstraints = false
         topRow.addSubview(dropsPill)
-   
+        
         
         
         renderBonus(state.bonus)
@@ -216,18 +220,22 @@ final class PlayViewController: BaseViewController {
         
         clock.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(clock)
-    //    clock.alpha = 0.75
+        //    clock.alpha = 0.75
         
         
         movesNumberLabel.textColor = UIColor.brown
         movesNumberLabel.textAlignment = .center
-        movesNumberLabel.text = "10"             // numbers only
+        movesNumberLabel.text = "0:10"             // numbers only
         movesNumberLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(movesNumberLabel)
         
+        
+        lastColorKnight.setImage(UIImage(named: "help"), for: .normal)
+   
+        lastColorKnight.addTarget(self, action: #selector(helpTapped), for: .touchUpInside)
+       
         lastColorKnight.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(lastColorKnight)
-        lastColorKnight.alpha = 0.25
         
         lastColorImage.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(lastColorImage)
@@ -240,7 +248,7 @@ final class PlayViewController: BaseViewController {
         
         
         view.bringSubviewToFront(boardView)
-    //    view.bringSubviewToFront(topRow)
+        //    view.bringSubviewToFront(topRow)
         
         
         
@@ -295,11 +303,11 @@ final class PlayViewController: BaseViewController {
             dropsPill.centerXAnchor.constraint(equalTo: g.centerXAnchor ),
             dropsPill.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 1.4),
             dropsPill.widthAnchor.constraint(equalTo: g.widthAnchor, multiplier: 0.6),
-     
+            
             
             clock.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 12),
             clock.centerYAnchor.constraint(equalTo: scorePill.centerYAnchor ),
-            clock.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 2.0),
+            clock.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 2.5),
             
             clock.widthAnchor.constraint(equalTo: clock.heightAnchor),
             
@@ -328,6 +336,7 @@ final class PlayViewController: BaseViewController {
             bonusLabel.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 42),
             bonusLabel.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -16),
             
+          
             
         ])
         
@@ -400,7 +409,7 @@ final class PlayViewController: BaseViewController {
         
         scoreLabel.font = AppFont.font(25, weight: .bold)
         bonusLabel.font = AppFont.font(21, weight: .bold)
-        movesNumberLabel.font = AppFont.font(27, weight: .extrabold)
+        movesNumberLabel.font = AppFont.font(25, weight: .bold)
         lastColorLabel.font = AppFont.font(21, weight: .bold)
         bombLabel.text = ""
         bombLabel.font = AppFont.font(23, weight: .bold)
@@ -490,13 +499,9 @@ final class PlayViewController: BaseViewController {
                     self.playSound("bomb")
                 }
                 
-                let imageName = "k_\(state.lastColor)"
-                self.lastColorImage.image = UIImage(named: imageName)
                 
-                let kName = "knight_\(state.lastColor)"
-                self.lastColorKnight.image = UIImage(named: kName)
-                
-                self.lastColorLabel.text =  state.numLastColor>0 ? "\(state.numLastColor)" : ""
+                self.renderLastColor(state.lastColor, number: state.numLastColor)
+                  
                 self.renderBonus(state.bonus)
                 self.renderMoves(state.remainingMoves)
                 self.updateBombButton(bombs: state.bomb)
@@ -518,13 +523,33 @@ final class PlayViewController: BaseViewController {
             self.unlockUI()
             self.render(state: state)
         }
+     }
+    
+    
+    
+    func renderLastColor(_ lastColor: Int, number: Int) {
         
         
+        if number>0 {
+            let img = UIImage(named: "knight_\(lastColor)")?.withRenderingMode(.alwaysOriginal)
+            lastColorKnight.setImage(img, for: .normal)
         
-        
+            lastColorImage.image = UIImage(named: "k_\(lastColor)")
+            lastColorKnight.alpha = 0.25
+            lastColorLabel.text =  "\(number)"
+            lastColorImage.isHidden = false
+            lastColorLabel.isHidden = false
+        } else {
+            let img = UIImage(named: "help")?.withRenderingMode(.alwaysOriginal)
+            lastColorKnight.setImage(img, for: .normal)
+       
+            lastColorKnight.alpha = 1
+            lastColorImage.isHidden = true
+            lastColorLabel.isHidden = true
+        }
+    
     }
-    
-    
+  
     func renderBonus(_ bns: Int) {
         bonusLabel.textColor = state.allowFreeMove ? .red : .black
         bonusLabel.text = "♥︎\(bns)"  //🖤♡
@@ -550,7 +575,8 @@ final class PlayViewController: BaseViewController {
     
     
     func renderMoves(_ moves: Int) {
-        movesNumberLabel.text = "\(moves)"
+        let m = String(format: ":%02d", moves)
+        movesNumberLabel.text = m
         if moves<3 {
             if moves==1 && state.allowFreeMove {
                 self.playPink()
@@ -564,7 +590,7 @@ final class PlayViewController: BaseViewController {
             }
         } else {
             clock.image = UIImage(named: "clock")!
-            movesNumberLabel.textColor = UIColor.white
+            movesNumberLabel.textColor = UIColor(cgColor: CGColor(red: 0.99, green: 0.9, blue: 0.8, alpha: 1))
         }
         topRow.alpha = state.remainingMoves>1 ? 1.0 : 0
     }
@@ -581,9 +607,9 @@ final class PlayViewController: BaseViewController {
         
         clearDragHighlights()
         pulsingMergeTargets.removeAll()
-        title = "Level \(s.level.num)"
-        backgroundImageView.image = UIImage(named: "bg_\((s.level.imageNum))")
-  
+        title = s.level.diablo>0 ? "Keep out upper row" : s.level.isCleaning ? "Safety level" : "Level \(s.level.num)"
+        backgroundImageView.image = UIImage(named: s.level.ground)
+        
         
         renderDrops(s.level.drops)
         render(state: s)
@@ -1139,20 +1165,61 @@ final class PlayViewController: BaseViewController {
         pulsingMergeTargets.removeAll()
     }
     
+    
+    func remove2rows(_ rows: Int) {
+        let r1 = rows
+        let c1 = NUMROW
+        
+        
+        
+        let brush = UIImageView(image: UIImage(named: "brush"))
+        //     brush.contentMode = .scaleAspectFill
+        brush.bounds.size = CGSize(width: 150, height: 240)
+        brush.center = CGPoint(x: view.frame.midX-200, y: view.frame.midY - 50)
+        brush.alpha = 0.9
+        brush.layer.zPosition = 2
+        view.addSubview(brush)
+        view.bringSubviewToFront(brush)
+            
+        self.playSound("sling")
+        brush.transform = CGAffineTransformMakeRotation(.pi/2)
+        
+    UIView.animate(withDuration: 1.05,
+                   delay: 0.0,
+                   animations: {
+        brush.transform = CGAffineTransform(translationX: 400, y: 0)
+        for r in 0..<r1 {
+            for c in 0..<c1 {
+                let id = self.state.board[r][c]
+                guard id > 0 else { continue }
+                if let v = self.pieceViews[r][c] {
+                    v.alpha = 0.0
+                    v.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
+                }
+            }
+        }
+    }, completion: { _ in
+        brush.removeFromSuperview()
+        self.viewModel.showLevelView()
+        self.playSound("stolen")
+    })
+}
     func levelFinished(_ flag: Bool) {
-        self.playSound("level")
-        self.lockUI()
-        
-        UIView.animate(withDuration: 1.2,
-                       delay: 0.0,
-                       animations: {
-            _ = self.pieceViews.map { $0.map {$0?.alpha = 0.25 } }
-            _ = self.dropSlots.map { $0.alpha = 0.0  }
-        }, completion: { _ in
-            self.viewModel.showLevelView()
-            self.playSound("final")
-        })
-        
+        lockUI()
+        _ = dropSlots.map { $0.alpha = 0.0  }
+        if state.level.diablo>0 {
+            remove2rows(state.level.diablo)
+        } else {
+            playSound("level")
+            UIView.animate(withDuration: 1.2,
+                           delay: 0.0,
+                           animations: {
+                _ = self.pieceViews.map { $0.map {$0?.alpha = 0.25 } }
+            }, completion: { _ in
+                self.viewModel.showLevelView()
+                self.playSound("final")
+            })
+        }
     }
     
     // MARK: - Score animation + sound

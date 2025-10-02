@@ -14,7 +14,8 @@ final class LevelViewController: BaseViewController {
     private let scorePill = UIView()
     private let scoreLabel = UILabel()
     private let bestLabel  = UILabel()
-    
+    private let nextLabel  = UILabel()
+  
     private let coin = UIImageView(image: UIImage(named: "coin"))
     private let imageView  = UIImageView()
     private let statusLabel  = UILabel()
@@ -41,7 +42,7 @@ final class LevelViewController: BaseViewController {
     private func loadBG() {
         view.backgroundColor = .systemBackground
    
-        bg.image = UIImage(named: "bg_\(vm.nextLevel.imageNum)")
+        bg.image = UIImage(named: vm.nextLevel.ground)
      
         bg.contentMode = .scaleAspectFill
         bg.translatesAutoresizingMaskIntoConstraints = false
@@ -75,19 +76,21 @@ final class LevelViewController: BaseViewController {
         scorePill.backgroundColor = .brown.withAlphaComponent(0.5)
         scorePill.layer.cornerRadius = 120
         scorePill.layer.cornerCurve = .continuous
+       
+        
+        nextLabel.text = vm.nextLevel.diablo>0 ? "Diablo Level" :"Next Level \(vm.nextLevel.num)"
+        nextLabel.font = AppFont.font(23, weight: .bold)
+        nextLabel.textColor = .white
     
       
         // Bonus image
         imageView.contentMode = .scaleAspectFit
-        let num =  (vm.level.num-1) % 16
-        imageView.image = UIImage(named: "level_\(num)")
+        imageView.image = UIImage(named: vm.nextLevel.icon)
         imageView.layer.magnificationFilter = .nearest
 
-        // next  Level title
-        let nextNum = vm.nextLevel.num
        
-        colorsPill.backgroundColor = UIColor(cgColor: CGColor(red: 0.85, green: 0.55, blue: 0.25, alpha: 0.9))
-        colorsPill.layer.cornerRadius = 40
+        colorsPill.backgroundColor = UIColor(cgColor: CGColor(red: 0.85, green: 0.55, blue: 0.25, alpha: vm.nextLevel.diablo>0 ? 0.25 : 0.9))
+        colorsPill.layer.cornerRadius = 70
         colorsPill.layer.cornerCurve = .continuous
      
       
@@ -97,7 +100,7 @@ final class LevelViewController: BaseViewController {
         statusLabel.font = AppFont.font(21, weight: .semibold)
         statusLabel.textColor = .white
         
-        movesLabel.text = "\(vm.nextLevel.moveQuota) moves to go"
+        movesLabel.text = vm.nextLevel.diablo>0 ? "KEEP OUT UPPER ROW" : "\(vm.nextLevel.moveQuota) moves to go"
         movesLabel.textAlignment = .center
         movesLabel.font = AppFont.font(21, weight: .semibold)
         movesLabel.textColor = .white
@@ -110,7 +113,7 @@ final class LevelViewController: BaseViewController {
         var config = UIButton.Configuration.plain()
         config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 12, trailing: 8)
         
-        config.attributedTitle = AttributedString("Level \(nextNum)",
+        config.attributedTitle = AttributedString("Play \(vm.nextLevel.num)",
                 attributes: .init([.font: AppFont.font(27, weight: .bold),
                                    .foregroundColor: UIColor(cgColor: CGColor(red: 1, green: 0.85, blue: 0.5, alpha: 1))]))
         config.background.backgroundColor = .clear
@@ -131,7 +134,7 @@ final class LevelViewController: BaseViewController {
       
       
        
-        [scorePill, colorsPill, bestLabel,  imageView, statusLabel, movesLabel, continueBtn].forEach {
+        [scorePill, colorsPill, bestLabel, nextLabel, imageView, statusLabel, movesLabel, continueBtn].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false; view.addSubview($0)
         }
         scorePill.addSubview(scoreLabel)
@@ -163,10 +166,12 @@ final class LevelViewController: BaseViewController {
             bestLabel.topAnchor.constraint(equalTo: scorePill.bottomAnchor, constant: 6),
             bestLabel.centerXAnchor.constraint(equalTo: scorePill.centerXAnchor),
        
+            nextLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+            nextLabel.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 32),
            
             
             imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            imageView.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 32),
+            imageView.topAnchor.constraint(equalTo: nextLabel.bottomAnchor, constant: 20),
             imageView.widthAnchor.constraint(lessThanOrEqualTo: g.widthAnchor, multiplier: 0.6),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
         
@@ -208,7 +213,7 @@ final class LevelViewController: BaseViewController {
         NSLayoutConstraint.activate([
             // Centered, not full-width
             colorsStrip.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            colorsStrip.topAnchor.constraint(equalTo: movesLabel.bottomAnchor, constant: 20),
+            colorsStrip.topAnchor.constraint(equalTo: movesLabel.bottomAnchor, constant: 15),
             
             // Keep some margins if it grows wide
             colorsStrip.leadingAnchor.constraint(greaterThanOrEqualTo: g.leadingAnchor, constant: 20),
@@ -225,7 +230,7 @@ final class LevelViewController: BaseViewController {
            
             
              
-            colorsPill.topAnchor.constraint(equalTo: imageView.topAnchor, constant: -15),
+            colorsPill.topAnchor.constraint(equalTo: nextLabel.topAnchor, constant: -15),
             colorsPill.bottomAnchor.constraint(equalTo: colorsStrip.bottomAnchor, constant: 20),
             colorsPill.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: -32),
             colorsPill.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 32),

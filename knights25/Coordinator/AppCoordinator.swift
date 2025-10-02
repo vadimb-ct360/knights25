@@ -53,6 +53,10 @@ final class AppCoordinator {
             self?.showBest(userId: uid)
         }
         
+        vm.onShowHelp = { [weak self] isSoundOn in
+             self?.showHelp(isSoundOn)
+        }
+        
         vm.onShowLevelView = { [weak self] level, totalScore in
             guard let self = self else { return }
             let userId  = UserDefaults.standard.string(forKey: "userId")
@@ -84,6 +88,12 @@ final class AppCoordinator {
         vc.onExitToPlay = { [weak self] in
             self?.restartPlay()
         }
+        nav?.pushViewController(vc, animated: true)
+    }
+    
+    func showHelp(_ isSoundOn: Bool) {
+        let vm = HelpViewModel(sound: isSoundOn)
+        let vc = HelpViewController(viewModel: vm)
         nav?.pushViewController(vc, animated: true)
     }
     

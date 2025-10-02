@@ -15,6 +15,8 @@ final class PlayViewModel {
     
     // setup in Coordinator
     var onShowBest: (() -> Void)?
+    var onShowHelp: ((Bool) -> Void)?
+    
     var onShowLevelView: ((Level, Int) -> Void)?
     var onShowFinalView: ((FinalSummary) -> Void)?
 
@@ -57,7 +59,11 @@ final class PlayViewModel {
         onShowBest?()
     }
     
-   
+    func exitToHelp() {
+        onShowHelp?(isSoundOn)
+    }
+    
+  
 
     func isValidMove(from: (Int,Int), to: (Int,Int)) -> Int {
          return gameService.isValidMove(in: state, from: from, to: to)
@@ -76,7 +82,6 @@ final class PlayViewModel {
     func bombTapped() {
         gameService.bombTapped(to: &state)
         state.bomb -= 1
-        state.bonus += 1
         state.score += state.level.num
         onStateChanged?(state)
     
@@ -115,16 +120,18 @@ final class PlayViewModel {
                 let mergeResult = gameService.applyMergeBonus(for: color, to: &state)
                 if mergeResult > 0 {
                     delta += mergeResult
-                    let target1 = gameService.spawnOneDrop(from:0, to: &state)
+                    gameService.spawnOneDrop(from:0, to: &state)
                 }
             }
         
             
             state.bomb += state.level.isBonus ? 1 : 0
-            let d = state.level.num + state.bonus
+            var d = state.level.num + state.bonus
+            state.bonus += state.level.isCleaning ? 0 : 1
+            d += gameService.clear13(for: &state)
+    
             state.score += d
             delta += d
-            state.bonus += 1
             onLevelFinished?(true)
             return (delta, bonus)
         }
