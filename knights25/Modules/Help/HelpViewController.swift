@@ -144,8 +144,13 @@ final class HelpViewController: UIViewController {
     
     private func frameForCell(_ r: Int, _ c: Int) -> CGRect {
         let s = card.bounds.width / CGFloat(5)
+<<<<<<< HEAD
         
         return CGRect(x: CGFloat(c) * s, y: CGFloat(r) * s, width: s, height: s)
+=======
+        let pad: CGFloat = 0.9
+        return CGRect(x: CGFloat(c) * s, y: CGFloat(r) * s, width: s * pad, height: s * pad)
+>>>>>>> 9dd885e (knight design final polishing)
     }
   
      

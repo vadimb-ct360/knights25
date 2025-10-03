@@ -41,7 +41,6 @@ final class PlayViewController: BaseViewController {
     private let lastColorLabel  = UILabel()
     
     
-    private let topRow = UIView()                // container for Drops Strip
     private let movesNumberLabel = UILabel()     // numbers only
     private let dropsStack = UIStackView()
     private var dropSlots: [UIImageView] = []
@@ -179,8 +178,6 @@ final class PlayViewController: BaseViewController {
     private func setupHUD() {
         navigationController?.setNavigationBarHidden(false, animated: false)
         // Top row with  Drops strip
-        topRow.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(topRow)
         
         // --- SCORE PILL (white rounded rect) ---
         scorePill.backgroundColor = .brown.withAlphaComponent(0.7)
@@ -194,7 +191,11 @@ final class PlayViewController: BaseViewController {
         dropsPill.layer.cornerRadius = 23
         dropsPill.layer.cornerCurve = .continuous
         dropsPill.translatesAutoresizingMaskIntoConstraints = false
+<<<<<<< HEAD
         topRow.addSubview(dropsPill)
+=======
+        view.addSubview(dropsPill)
+>>>>>>> 9dd885e (knight design final polishing)
         
         
         
@@ -248,19 +249,22 @@ final class PlayViewController: BaseViewController {
         
         
         view.bringSubviewToFront(boardView)
+<<<<<<< HEAD
         //    view.bringSubviewToFront(topRow)
+=======
+>>>>>>> 9dd885e (knight design final polishing)
         
         
         
         // Drops stack (right-aligned)
         dropsStack.axis = .horizontal
         dropsStack.alignment = .center
-        dropsStack.spacing = 2
+        dropsStack.spacing = 0
         dropsStack.translatesAutoresizingMaskIntoConstraints = false
-        topRow.addSubview(dropsStack)
+        dropsPill.addSubview(dropsStack)
         
         dropSlots.removeAll()
-        for _ in 0..<NUMDROPS {
+        for _ in 0..<5 {
             let iv = UIImageView()
             iv.contentMode = .scaleAspectFit
             iv.translatesAutoresizingMaskIntoConstraints = false
@@ -269,20 +273,25 @@ final class PlayViewController: BaseViewController {
             dropSlots.append(iv)
             dropsStack.addArrangedSubview(iv)
         }
-        let spacer = UIView()
-        spacer.translatesAutoresizingMaskIntoConstraints = false
-        spacer.widthAnchor.constraint(equalToConstant: 105).isActive = true
-        dropsStack.insertArrangedSubview(spacer, at: NUMDROPS-2)
-        
-        
+        let d6 = UIImageView()
+        d6.contentMode = .scaleAspectFit
+        d6.translatesAutoresizingMaskIntoConstraints = false
+        dropSlots.append(d6)
+        let d7 = UIImageView()
+        d7.contentMode = .scaleAspectFit
+        d7.translatesAutoresizingMaskIntoConstraints = false
+        dropSlots.append(d7)
+        view.addSubview(d6)
+        view.addSubview(d7)
+      
         // Layout
         let g = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             // center pill under the title
             
-            scorePill.topAnchor.constraint(equalTo: g.topAnchor, constant: 15),
+            scorePill.topAnchor.constraint(equalTo: g.topAnchor, constant: 8),
             scorePill.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            
+      
             coin.centerYAnchor.constraint(equalTo: scorePill.centerYAnchor),
             coin.leadingAnchor.constraint(equalTo: scorePill.leadingAnchor, constant: 5),
             coin.heightAnchor.constraint(equalToConstant: dropSlotSize+4),
@@ -294,11 +303,10 @@ final class PlayViewController: BaseViewController {
             scoreLabel.leadingAnchor.constraint(equalTo: coin.trailingAnchor, constant: 5),
             scoreLabel.trailingAnchor.constraint(equalTo: scorePill.trailingAnchor, constant: -15),
             
-            // Top row beneath score
-            topRow.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: -57),
-            topRow.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 25),
-            topRow.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: 80),
+             
+             
             
+<<<<<<< HEAD
             dropsPill.centerYAnchor.constraint(equalTo: topRow.centerYAnchor ),
             dropsPill.centerXAnchor.constraint(equalTo: g.centerXAnchor ),
             dropsPill.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 1.4),
@@ -308,20 +316,43 @@ final class PlayViewController: BaseViewController {
             clock.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 12),
             clock.centerYAnchor.constraint(equalTo: scorePill.centerYAnchor ),
             clock.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 2.5),
+=======
+            clock.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 2),
+            clock.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor, constant: -10 ),
+            clock.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 2),
+>>>>>>> 9dd885e (knight design final polishing)
             
             clock.widthAnchor.constraint(equalTo: clock.heightAnchor),
             
             // Moves label inside with padding
             movesNumberLabel.centerXAnchor.constraint(equalTo: clock.centerXAnchor),
-            movesNumberLabel.centerYAnchor.constraint(equalTo: scorePill.centerYAnchor),
+            movesNumberLabel.centerYAnchor.constraint(equalTo: clock.centerYAnchor),
             
+        
             // Drops stack on right
-            dropsStack.trailingAnchor.constraint(equalTo: topRow.trailingAnchor),
-            dropsStack.centerYAnchor.constraint(equalTo: topRow.centerYAnchor),
+            dropsStack.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+            dropsStack.topAnchor.constraint(equalTo: scorePill.bottomAnchor, constant: 30),
             dropsStack.heightAnchor.constraint(equalToConstant: dropSlotSize),
             
-            lastColorKnight.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -12),
-            lastColorKnight.centerYAnchor.constraint(equalTo: scorePill.centerYAnchor),
+            dropsPill.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor ),
+            dropsPill.leadingAnchor.constraint(equalTo: dropsStack.leadingAnchor, constant: -12 ),
+            dropsPill.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 1.4),
+            dropsPill.trailingAnchor.constraint(equalTo: dropsStack.trailingAnchor, constant: 12 ),
+         
+            
+            d6.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor),
+            d6.leadingAnchor.constraint(equalTo: g.trailingAnchor, constant: dropSlotSize),
+            d6.widthAnchor.constraint(equalToConstant: dropSlotSize),
+            d6.heightAnchor.constraint(equalToConstant: dropSlotSize),
+   
+            d7.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor),
+            d7.leadingAnchor.constraint(equalTo: g.trailingAnchor, constant: dropSlotSize),
+            d7.widthAnchor.constraint(equalToConstant: dropSlotSize),
+            d7.heightAnchor.constraint(equalToConstant: dropSlotSize),
+   
+           
+            lastColorKnight.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -1),
+            lastColorKnight.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor, constant: -10),
             lastColorKnight.widthAnchor.constraint(equalTo: clock.widthAnchor, multiplier: 0.95),
             lastColorKnight.heightAnchor.constraint(equalTo: lastColorKnight.widthAnchor),
             
@@ -535,7 +566,11 @@ final class PlayViewController: BaseViewController {
             lastColorKnight.setImage(img, for: .normal)
         
             lastColorImage.image = UIImage(named: "k_\(lastColor)")
+<<<<<<< HEAD
             lastColorKnight.alpha = 0.25
+=======
+            lastColorKnight.alpha = 0.5
+>>>>>>> 9dd885e (knight design final polishing)
             lastColorLabel.text =  "\(number)"
             lastColorImage.isHidden = false
             lastColorLabel.isHidden = false
@@ -592,7 +627,7 @@ final class PlayViewController: BaseViewController {
             clock.image = UIImage(named: "clock")!
             movesNumberLabel.textColor = UIColor(cgColor: CGColor(red: 0.99, green: 0.9, blue: 0.8, alpha: 1))
         }
-        topRow.alpha = state.remainingMoves>1 ? 1.0 : 0
+        dropsPill.alpha = state.remainingMoves>1 ? 1.0 : 0
     }
     
     
@@ -607,7 +642,11 @@ final class PlayViewController: BaseViewController {
         
         clearDragHighlights()
         pulsingMergeTargets.removeAll()
+<<<<<<< HEAD
         title = s.level.diablo>0 ? "Keep out upper row" : s.level.isCleaning ? "Safety level" : "Level \(s.level.num)"
+=======
+        title = s.level.diablo>0 ? "Keep out upper rows" : s.level.isCleaning ? "Safety level \(s.level.num)" : "Level \(s.level.num)"
+>>>>>>> 9dd885e (knight design final polishing)
         backgroundImageView.image = UIImage(named: s.level.ground)
         
         
@@ -1169,6 +1208,7 @@ final class PlayViewController: BaseViewController {
     func remove2rows(_ rows: Int) {
         let r1 = rows
         let c1 = NUMROW
+<<<<<<< HEAD
         
         
         
@@ -1178,21 +1218,53 @@ final class PlayViewController: BaseViewController {
         brush.center = CGPoint(x: view.frame.midX-200, y: view.frame.midY - 50)
         brush.alpha = 0.9
         brush.layer.zPosition = 2
+=======
+        let s = view.frame.width/6
+        let h: CGFloat = s * (3 - (CGFloat(rows)+1)/2)
+        
+        let ink = UIImageView(image: UIImage(named: "ink"))
+        ink.bounds.size = CGSize(width: 100, height: Int(s) * rows)
+        ink.center = CGPoint(x: view.frame.midX-180, y: view.frame.midY - h)
+        ink.alpha = 0.65
+        view.addSubview(ink)
+   
+        
+        let brush = UIImageView(image: UIImage(named: "brush"))
+        brush.bounds.size = CGSize(width: s*2.5, height: s*3.5)
+        brush.center = CGPoint(x: view.frame.midX-200, y: view.frame.midY - h)
+        brush.alpha = 0.9
+>>>>>>> 9dd885e (knight design final polishing)
         view.addSubview(brush)
         view.bringSubviewToFront(brush)
             
         self.playSound("sling")
+<<<<<<< HEAD
         brush.transform = CGAffineTransformMakeRotation(.pi/2)
+=======
+        brush.transform = CGAffineTransformMakeRotation(-0.5 * .pi)
+>>>>>>> 9dd885e (knight design final polishing)
         
     UIView.animate(withDuration: 1.05,
                    delay: 0.0,
                    animations: {
+<<<<<<< HEAD
         brush.transform = CGAffineTransform(translationX: 400, y: 0)
         for r in 0..<r1 {
             for c in 0..<c1 {
                 let id = self.state.board[r][c]
                 guard id > 0 else { continue }
                 if let v = self.pieceViews[r][c] {
+=======
+        
+        ink.transform = CGAffineTransform(translationX: 250, y: 0).scaledBy(x: 4, y: 1)
+        brush.transform = CGAffineTransform(translationX: 500, y: 0).rotated(by: -0.5 * .pi)
+        for r in 0..<r1 {
+            for c in 0..<c1 {
+                let id = self.state.board[r][c]
+                guard id == 0 else { continue }
+                if let v = self.pieceViews[r][c] {
+                    print("clear knight [\(r),\(c)]")
+>>>>>>> 9dd885e (knight design final polishing)
                     v.alpha = 0.0
                     v.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
                 }
@@ -1200,6 +1272,10 @@ final class PlayViewController: BaseViewController {
         }
     }, completion: { _ in
         brush.removeFromSuperview()
+<<<<<<< HEAD
+=======
+        ink.removeFromSuperview()
+>>>>>>> 9dd885e (knight design final polishing)
         self.viewModel.showLevelView()
         self.playSound("stolen")
     })
@@ -1307,10 +1383,10 @@ final class PlayViewController: BaseViewController {
     
     // MARK: - Helpers
     private func frameForCell(_ r: Int, _ c: Int) -> CGRect {
-        let pad: CGFloat = 0.95
+        let pad: CGFloat = 0.9
         let s = cellSize > 0 ? cellSize : (boardView.bounds.width / CGFloat(NUMROW))
         
-        return CGRect(x: CGFloat(c) * s, y: CGFloat(r) * s, width: s, height: s*pad)
+        return CGRect(x: 2 + CGFloat(c) * s, y: CGFloat(r) * s, width: s*pad, height: s*pad)
     }
     
     private func indexForPoint(_ p: CGPoint) -> (r:Int,c:Int)? {

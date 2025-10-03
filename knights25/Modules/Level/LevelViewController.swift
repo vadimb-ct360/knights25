@@ -78,9 +78,16 @@ final class LevelViewController: BaseViewController {
         scorePill.layer.cornerCurve = .continuous
        
         
+<<<<<<< HEAD
         nextLabel.text = vm.nextLevel.diablo>0 ? "Diablo Level" :"Next Level \(vm.nextLevel.num)"
         nextLabel.font = AppFont.font(23, weight: .bold)
         nextLabel.textColor = .white
+=======
+        nextLabel.text = vm.nextLevel.diablo>0 ? "Next Level \(vm.nextLevel.num)\nDiablo Level" : vm.nextLevel.isCleaning ? "Next Level \(vm.nextLevel.num)\nSafety Level" : "Next Level \(vm.nextLevel.num)"
+        nextLabel.font = AppFont.font(23, weight: .bold)
+        nextLabel.textColor = vm.nextLevel.diablo==1 ? .blue : .white
+        nextLabel.numberOfLines = 0
+>>>>>>> 9dd885e (knight design final polishing)
     
       
         // Bonus image
@@ -89,7 +96,12 @@ final class LevelViewController: BaseViewController {
         imageView.layer.magnificationFilter = .nearest
 
        
+<<<<<<< HEAD
         colorsPill.backgroundColor = UIColor(cgColor: CGColor(red: 0.85, green: 0.55, blue: 0.25, alpha: vm.nextLevel.diablo>0 ? 0.25 : 0.9))
+=======
+        colorsPill.backgroundColor = UIColor(cgColor: CGColor(red: 0.85, green: 0.55, blue: 0.25, alpha: vm.nextLevel.diablo>0 ? 0.0 : 0.9))
+        
+>>>>>>> 9dd885e (knight design final polishing)
         colorsPill.layer.cornerRadius = 70
         colorsPill.layer.cornerCurve = .continuous
      
@@ -167,11 +179,19 @@ final class LevelViewController: BaseViewController {
             bestLabel.centerXAnchor.constraint(equalTo: scorePill.centerXAnchor),
        
             nextLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+<<<<<<< HEAD
             nextLabel.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 32),
            
             
             imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
             imageView.topAnchor.constraint(equalTo: nextLabel.bottomAnchor, constant: 20),
+=======
+            nextLabel.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 38),
+           
+            
+            imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+            imageView.topAnchor.constraint(equalTo: nextLabel.bottomAnchor, constant: 12),
+>>>>>>> 9dd885e (knight design final polishing)
             imageView.widthAnchor.constraint(lessThanOrEqualTo: g.widthAnchor, multiplier: 0.6),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
         
@@ -191,21 +211,18 @@ final class LevelViewController: BaseViewController {
     }
     
     private func setupColorsStrip() {
-        colorsStrip.backgroundColor = UIColor(cgColor: CGColor(red: 1, green: 0.7, blue: 0.3, alpha: 1))
+        colorsStrip.backgroundColor = UIColor(cgColor: CGColor(red: 1, green: 0.9, blue: 0.6, alpha: 1))
         colorsStrip.layer.cornerRadius = 16
         colorsStrip.layer.cornerCurve = .continuous
         
         
-        colorsStrip.layer.borderWidth = 0
-        colorsStrip.layer.borderColor = UIColor.white.cgColor
-        colorsStrip.layer.masksToBounds = true
-        
+         
         colorsStrip.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(colorsStrip)
         
         colorsStack.axis = .horizontal
         colorsStack.alignment = .center
-        colorsStack.spacing = 3
+        colorsStack.spacing = 0
         colorsStack.translatesAutoresizingMaskIntoConstraints = false
         colorsStrip.addSubview(colorsStack)
         
@@ -220,10 +237,10 @@ final class LevelViewController: BaseViewController {
             colorsStrip.trailingAnchor.constraint(lessThanOrEqualTo: g.trailingAnchor, constant: -20),
             
             // Stack inside with padding; strip width follows content
-            colorsStack.topAnchor.constraint(equalTo: colorsStrip.topAnchor, constant: 13),
-            colorsStack.bottomAnchor.constraint(equalTo: colorsStrip.bottomAnchor, constant: -13),
-            colorsStack.leadingAnchor.constraint(equalTo: colorsStrip.leadingAnchor, constant: 20),
-            colorsStack.trailingAnchor.constraint(equalTo: colorsStrip.trailingAnchor, constant: -20),
+            colorsStack.topAnchor.constraint(equalTo: colorsStrip.topAnchor, constant: 8),
+            colorsStack.bottomAnchor.constraint(equalTo: colorsStrip.bottomAnchor, constant: -8),
+            colorsStack.leadingAnchor.constraint(equalTo: colorsStrip.leadingAnchor, constant: 16),
+            colorsStack.trailingAnchor.constraint(equalTo: colorsStrip.trailingAnchor, constant: -16),
             
           
             
@@ -246,7 +263,7 @@ final class LevelViewController: BaseViewController {
     private func renderColorsStrip(numColors: Int) {
         
         
-        let iconSize: CGFloat = 28
+        let iconSize: CGFloat = 36
         for i in 1...numColors {
             let iv = UIImageView(image: UIImage(named: "knight_\(i)"))
             iv.contentMode = .scaleAspectFit
