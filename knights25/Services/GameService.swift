@@ -231,11 +231,7 @@ final class DefaultGameService: GameService {
             }
         }
         
-<<<<<<< HEAD
-        if numc == 2 && Int.random(in: 0...2)>0 {
-=======
         if numc == 2 && Int.random(in: 0...2) == 0 {
->>>>>>> 9dd885e (knight design final polishing)
             var r1 = 0
             var c1 = 0
             for r in 0..<state.board.count {
@@ -248,16 +244,8 @@ final class DefaultGameService: GameService {
             
             state.board[r1][c1] = 6
             state.board[r1>2 ? r1-2 : r1 + 2][c1>1 ? c1-1 : c1 + 1] = 6
-<<<<<<< HEAD
-       
-            
-        }
-        state.score += numc + numShift*(state.level.num)
-=======
         }
         state.score += numc + numShift * state.level.num
->>>>>>> 9dd885e (knight design final polishing)
-     
     }
     
     

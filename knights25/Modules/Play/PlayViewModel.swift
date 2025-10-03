@@ -82,10 +82,6 @@ final class PlayViewModel {
     func bombTapped() {
         gameService.bombTapped(to: &state)
         state.bomb -= 1
-<<<<<<< HEAD
-        state.score += state.level.num
-=======
->>>>>>> 9dd885e (knight design final polishing)
         onStateChanged?(state)
     
     }

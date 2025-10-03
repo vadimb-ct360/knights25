@@ -78,16 +78,10 @@ final class LevelViewController: BaseViewController {
         scorePill.layer.cornerCurve = .continuous
        
         
-<<<<<<< HEAD
-        nextLabel.text = vm.nextLevel.diablo>0 ? "Diablo Level" :"Next Level \(vm.nextLevel.num)"
-        nextLabel.font = AppFont.font(23, weight: .bold)
-        nextLabel.textColor = .white
-=======
         nextLabel.text = vm.nextLevel.diablo>0 ? "Next Level \(vm.nextLevel.num)\nDiablo Level" : vm.nextLevel.isCleaning ? "Next Level \(vm.nextLevel.num)\nSafety Level" : "Next Level \(vm.nextLevel.num)"
         nextLabel.font = AppFont.font(23, weight: .bold)
         nextLabel.textColor = vm.nextLevel.diablo==1 ? .blue : .white
         nextLabel.numberOfLines = 0
->>>>>>> 9dd885e (knight design final polishing)
     
       
         // Bonus image
@@ -96,12 +90,8 @@ final class LevelViewController: BaseViewController {
         imageView.layer.magnificationFilter = .nearest
 
        
-<<<<<<< HEAD
-        colorsPill.backgroundColor = UIColor(cgColor: CGColor(red: 0.85, green: 0.55, blue: 0.25, alpha: vm.nextLevel.diablo>0 ? 0.25 : 0.9))
-=======
         colorsPill.backgroundColor = UIColor(cgColor: CGColor(red: 0.85, green: 0.55, blue: 0.25, alpha: vm.nextLevel.diablo>0 ? 0.0 : 0.9))
         
->>>>>>> 9dd885e (knight design final polishing)
         colorsPill.layer.cornerRadius = 70
         colorsPill.layer.cornerCurve = .continuous
      
@@ -179,19 +169,11 @@ final class LevelViewController: BaseViewController {
             bestLabel.centerXAnchor.constraint(equalTo: scorePill.centerXAnchor),
        
             nextLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-<<<<<<< HEAD
-            nextLabel.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 32),
-           
-            
-            imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            imageView.topAnchor.constraint(equalTo: nextLabel.bottomAnchor, constant: 20),
-=======
             nextLabel.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 38),
            
             
             imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
             imageView.topAnchor.constraint(equalTo: nextLabel.bottomAnchor, constant: 12),
->>>>>>> 9dd885e (knight design final polishing)
             imageView.widthAnchor.constraint(lessThanOrEqualTo: g.widthAnchor, multiplier: 0.6),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
         

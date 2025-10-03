@@ -191,11 +191,7 @@ final class PlayViewController: BaseViewController {
         dropsPill.layer.cornerRadius = 23
         dropsPill.layer.cornerCurve = .continuous
         dropsPill.translatesAutoresizingMaskIntoConstraints = false
-<<<<<<< HEAD
-        topRow.addSubview(dropsPill)
-=======
         view.addSubview(dropsPill)
->>>>>>> 9dd885e (knight design final polishing)
         
         
         
@@ -249,10 +245,6 @@ final class PlayViewController: BaseViewController {
         
         
         view.bringSubviewToFront(boardView)
-<<<<<<< HEAD
-        //    view.bringSubviewToFront(topRow)
-=======
->>>>>>> 9dd885e (knight design final polishing)
         
         
         
@@ -304,23 +296,9 @@ final class PlayViewController: BaseViewController {
             scoreLabel.trailingAnchor.constraint(equalTo: scorePill.trailingAnchor, constant: -15),
             
              
-             
-            
-<<<<<<< HEAD
-            dropsPill.centerYAnchor.constraint(equalTo: topRow.centerYAnchor ),
-            dropsPill.centerXAnchor.constraint(equalTo: g.centerXAnchor ),
-            dropsPill.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 1.4),
-            dropsPill.widthAnchor.constraint(equalTo: g.widthAnchor, multiplier: 0.6),
-            
-            
-            clock.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 12),
-            clock.centerYAnchor.constraint(equalTo: scorePill.centerYAnchor ),
-            clock.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 2.5),
-=======
             clock.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 2),
             clock.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor, constant: -10 ),
             clock.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 2),
->>>>>>> 9dd885e (knight design final polishing)
             
             clock.widthAnchor.constraint(equalTo: clock.heightAnchor),
             
@@ -566,11 +544,7 @@ final class PlayViewController: BaseViewController {
             lastColorKnight.setImage(img, for: .normal)
         
             lastColorImage.image = UIImage(named: "k_\(lastColor)")
-<<<<<<< HEAD
-            lastColorKnight.alpha = 0.25
-=======
             lastColorKnight.alpha = 0.5
->>>>>>> 9dd885e (knight design final polishing)
             lastColorLabel.text =  "\(number)"
             lastColorImage.isHidden = false
             lastColorLabel.isHidden = false
@@ -642,11 +616,7 @@ final class PlayViewController: BaseViewController {
         
         clearDragHighlights()
         pulsingMergeTargets.removeAll()
-<<<<<<< HEAD
-        title = s.level.diablo>0 ? "Keep out upper row" : s.level.isCleaning ? "Safety level" : "Level \(s.level.num)"
-=======
         title = s.level.diablo>0 ? "Keep out upper rows" : s.level.isCleaning ? "Safety level \(s.level.num)" : "Level \(s.level.num)"
->>>>>>> 9dd885e (knight design final polishing)
         backgroundImageView.image = UIImage(named: s.level.ground)
         
         
@@ -1208,17 +1178,6 @@ final class PlayViewController: BaseViewController {
     func remove2rows(_ rows: Int) {
         let r1 = rows
         let c1 = NUMROW
-<<<<<<< HEAD
-        
-        
-        
-        let brush = UIImageView(image: UIImage(named: "brush"))
-        //     brush.contentMode = .scaleAspectFill
-        brush.bounds.size = CGSize(width: 150, height: 240)
-        brush.center = CGPoint(x: view.frame.midX-200, y: view.frame.midY - 50)
-        brush.alpha = 0.9
-        brush.layer.zPosition = 2
-=======
         let s = view.frame.width/6
         let h: CGFloat = s * (3 - (CGFloat(rows)+1)/2)
         
@@ -1233,28 +1192,15 @@ final class PlayViewController: BaseViewController {
         brush.bounds.size = CGSize(width: s*2.5, height: s*3.5)
         brush.center = CGPoint(x: view.frame.midX-200, y: view.frame.midY - h)
         brush.alpha = 0.9
->>>>>>> 9dd885e (knight design final polishing)
         view.addSubview(brush)
         view.bringSubviewToFront(brush)
             
         self.playSound("sling")
-<<<<<<< HEAD
-        brush.transform = CGAffineTransformMakeRotation(.pi/2)
-=======
         brush.transform = CGAffineTransformMakeRotation(-0.5 * .pi)
->>>>>>> 9dd885e (knight design final polishing)
         
     UIView.animate(withDuration: 1.05,
                    delay: 0.0,
                    animations: {
-<<<<<<< HEAD
-        brush.transform = CGAffineTransform(translationX: 400, y: 0)
-        for r in 0..<r1 {
-            for c in 0..<c1 {
-                let id = self.state.board[r][c]
-                guard id > 0 else { continue }
-                if let v = self.pieceViews[r][c] {
-=======
         
         ink.transform = CGAffineTransform(translationX: 250, y: 0).scaledBy(x: 4, y: 1)
         brush.transform = CGAffineTransform(translationX: 500, y: 0).rotated(by: -0.5 * .pi)
@@ -1264,7 +1210,6 @@ final class PlayViewController: BaseViewController {
                 guard id == 0 else { continue }
                 if let v = self.pieceViews[r][c] {
                     print("clear knight [\(r),\(c)]")
->>>>>>> 9dd885e (knight design final polishing)
                     v.alpha = 0.0
                     v.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
                 }
@@ -1272,10 +1217,7 @@ final class PlayViewController: BaseViewController {
         }
     }, completion: { _ in
         brush.removeFromSuperview()
-<<<<<<< HEAD
-=======
         ink.removeFromSuperview()
->>>>>>> 9dd885e (knight design final polishing)
         self.viewModel.showLevelView()
         self.playSound("stolen")
     })
