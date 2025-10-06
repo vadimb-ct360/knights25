@@ -13,7 +13,7 @@ final class ArcStarRatingView: UIView {
     var rate: Int = 0 { didSet { rate = max(0, min(rate, maxRate)); refresh() } }
     var maxRate: Int = 10 { didSet { maxRate = max(1, maxRate); refresh() } }
     var starSize: CGSize = CGSize(width: 28, height: 28) { didSet { refresh() } }
-    var arcDegrees: CGFloat = 140 { didSet { refresh() } }
+    var arcDegrees: CGFloat = 180 { didSet { refresh() } }
     
     // MARK: Images
     var filledImage: UIImage? = UIImage(named: "star_star")
@@ -74,16 +74,16 @@ final class ArcStarRatingView: UIView {
 
         // Device width and chord
         let deviceWidth = UIScreen.main.bounds.width
-        let chord: CGFloat = deviceWidth * 0.8
+        let chord: CGFloat = deviceWidth * 0.85
 
         // Arc parameters
         let theta = arcDegrees * .pi / 180
-        let radius = chord / (2 * sin(theta / 2))
+        let radius = chord/2
 
         // Same center as before
         let centerX = bounds.midX
-        let verticalOffset: CGFloat = starSize.height * 0.2
-        let circleCenter = CGPoint(x: centerX, y: radius - verticalOffset)
+        let centerY = bounds.midY
+        let circleCenter = CGPoint(x: centerX, y: 0)
 
    
         // ---- Position stars along the arc ----
@@ -101,18 +101,4 @@ final class ArcStarRatingView: UIView {
         }
     }
 
-    // Provide a sensible intrinsic height (enough to fit the arc and stars)
-    override var intrinsicContentSize: CGSize {
-        // Recompute using current device width
-        let deviceWidth = UIScreen.main.bounds.width
-        let chord: CGFloat = deviceWidth * 0.8
-        let theta = arcDegrees * .pi / 180
-        let radius = chord / (2 * sin(theta / 2))
-        // Height of arc segment = R - R*cos(theta/2), plus star size
-        let sagitta = radius * (1 - cos(theta / 2))
-        let h = sagitta + starSize.height * 1.1
-        // Full width: make it equal to our super’s width if possible; fallback to chord + padding
-        let w = max(deviceWidth, chord + starSize.width)
-        return CGSize(width: w, height: h)
-    }
-}
+ }

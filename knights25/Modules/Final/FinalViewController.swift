@@ -7,15 +7,25 @@
 
 // Modules/Final/FinalViewController.swift
 import UIKit
+import AVFoundation
 
 final class FinalViewController: BaseViewController {
+    private var queuePlayer: AVQueuePlayer?
+    private var looper: AVPlayerLooper?
     private let vm: FinalViewModel
     var onBest: ((String?) -> Void)?     // passes userId to coordinator
-    
+  
     private let titleLabel = UILabel()
-    private let scoreLabel = UILabel()
-    private let levelLabel = UILabel()
-    private let bonusLabel = UILabel()
+    
+    private let scoreLabelL = UILabel()
+    private let levelLabelL = UILabel()
+    private let bonusLabelL = UILabel()
+    
+    private let scoreLabelR = UILabel()
+    private let levelLabelR = UILabel()
+    private let bonusLabelR = UILabel()
+    
+
     private let statusLabel = UILabel()
     private let nameLabel = PaddedLabel()
 
@@ -30,12 +40,27 @@ final class FinalViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if isSoundOn {
+             startGaplessLoop()
+        }
+  
         loadBG()
         loadUI()
         loadRate()
         updateRadiuses()
         bind()
     }
+    
+    
+    override func soundSettingDidChange(isOn: Bool) {
+         // start/stop music or mute SFX for this screen
+        if isOn {
+            startGaplessLoop()
+        } else {
+            stopGapless()
+        }
+    }
+
     
     func updateRadiuses() {
         nameLabel.layoutIfNeeded()
@@ -49,23 +74,45 @@ final class FinalViewController: BaseViewController {
         titleLabel.font = AppFont.font(25, weight: .semibold)
         titleLabel.textAlignment = .center
         
-        scoreLabel.text = "Total: \(vm.summary.totalScore) / \(vm.sMax)"
-        scoreLabel.font = AppFont.font(23, weight: .semibold)
-        scoreLabel.textAlignment = .center
-        levelLabel.textColor = vm.summary.totalScore >= vm.sMax ? .red : .secondaryLabel
+        scoreLabelL.text = "Total :"
+        let m = String(format: "%05d", vm.summary.totalScore)
+        scoreLabelR.text = "\(m)/\(vm.sMax)"
+        scoreLabelL.font = AppFont.font(23, weight: .semibold)
+        scoreLabelL.textAlignment = .right
+        scoreLabelR.font = AppFont.font(23, weight: .semibold)
+        scoreLabelR.textAlignment = .left
+    
         
         
+        levelLabelL.textColor = vm.summary.totalScore >= vm.sMax ? .red : .secondaryLabel
+         levelLabelL.text = "Levels cleared :"
+        levelLabelL.font = AppFont.font(21, weight: .semibold)
+        levelLabelL.textAlignment = .right
+        levelLabelL.textColor = vm.summary.levelsCleared >= vm.lMax ? .red : .secondaryLabel
+ 
+        levelLabelR.textColor = vm.summary.totalScore >= vm.sMax ? .red : .secondaryLabel
         
-        levelLabel.text = "👻 Levels cleared: \(vm.summary.levelsCleared) /  \(vm.lMax)"
-        levelLabel.font = AppFont.font(21, weight: .semibold)
-        levelLabel.textAlignment = .center
-        levelLabel.textColor = vm.summary.levelsCleared >= vm.lMax ? .red : .secondaryLabel
+        let m2 = String(format: "%02d", vm.summary.levelsCleared)
+  
+        levelLabelR.text = "\(m2)/\(vm.lMax)"
+        levelLabelR.font = AppFont.font(21, weight: .semibold)
+        levelLabelR.textAlignment = .left
+        levelLabelR.textColor = vm.summary.levelsCleared >= vm.lMax ? .red : .secondaryLabel
+ 
         
-        bonusLabel.text = "♥︎ Bonuses: \(vm.summary.bonus) /  \(vm.bMax)"
         
-        bonusLabel.font = AppFont.font(21, weight: .semibold)
-        bonusLabel.textAlignment = .center
-        bonusLabel.textColor = vm.summary.bonus >= vm.bMax ? .red : .secondaryLabel
+        bonusLabelL.text = "Bonuses :"
+        bonusLabelL.font = AppFont.font(21, weight: .semibold)
+        bonusLabelL.textAlignment = .center
+        bonusLabelL.textColor = vm.summary.bonus >= vm.bMax ? .red : .secondaryLabel
+        
+        let m3 = String(format: "%03d", vm.summary.bonus)
+
+        bonusLabelR.text = "\(m3)/\(vm.bMax)"
+        
+        bonusLabelR.font = AppFont.font(21, weight: .semibold)
+        bonusLabelR.textAlignment = .center
+        bonusLabelR.textColor = vm.summary.bonus >= vm.bMax ? .red : .secondaryLabel
       
         
         let raw = UIImage(named: "button_2")!
@@ -112,7 +159,7 @@ final class FinalViewController: BaseViewController {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
       
         
-        [titleLabel, coin, scoreLabel, levelLabel, bonusLabel, imageView, nameLabel, continueBtn, statusLabel ].forEach {
+        [titleLabel, coin, scoreLabelL, levelLabelL, bonusLabelL, scoreLabelR, levelLabelR, bonusLabelR, imageView, nameLabel, continueBtn, statusLabel ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -123,32 +170,45 @@ final class FinalViewController: BaseViewController {
             titleLabel.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20),
             
-            scoreLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
-            scoreLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor, constant: 12),
+            scoreLabelL.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
+            scoreLabelL.trailingAnchor.constraint(equalTo: g.centerXAnchor),
+         
+            scoreLabelR.centerYAnchor.constraint(equalTo: scoreLabelL.centerYAnchor),
+            scoreLabelR.leadingAnchor.constraint(equalTo: g.centerXAnchor, constant: 10),
+ 
             
-            coin.centerYAnchor.constraint(equalTo: scoreLabel.centerYAnchor),
-            coin.trailingAnchor.constraint(equalTo: scoreLabel.leadingAnchor, constant: -5),
+            
+            
+            coin.centerYAnchor.constraint(equalTo: scoreLabelL.centerYAnchor),
+            coin.trailingAnchor.constraint(equalTo: scoreLabelL.leadingAnchor, constant: -5),
             coin.heightAnchor.constraint(equalToConstant: 32),
             coin.widthAnchor.constraint(equalTo: coin.heightAnchor),
             
             
-            levelLabel.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor, constant: 8),
-            levelLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            levelLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+            levelLabelL.topAnchor.constraint(equalTo: scoreLabelL.bottomAnchor, constant: 8),
+            levelLabelL.leadingAnchor.constraint(lessThanOrEqualTo: scoreLabelL.leadingAnchor),
+            levelLabelL.trailingAnchor.constraint(equalTo: scoreLabelL.trailingAnchor),
+     
+            levelLabelR.centerYAnchor.constraint(equalTo: levelLabelL.centerYAnchor),
+            levelLabelR.leadingAnchor.constraint(equalTo: g.centerXAnchor, constant: 10),
+ 
             
-            bonusLabel.topAnchor.constraint(equalTo: levelLabel.bottomAnchor, constant: 8),
-            bonusLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            bonusLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+            
+            bonusLabelL.topAnchor.constraint(equalTo: levelLabelL.bottomAnchor, constant: 8),
+            bonusLabelL.trailingAnchor.constraint(equalTo: scoreLabelL.trailingAnchor),
         
-            
-            imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: g.centerYAnchor),
-            imageView.widthAnchor.constraint(lessThanOrEqualTo: g.widthAnchor, multiplier: 0.6),
+            bonusLabelR.centerYAnchor.constraint(equalTo: bonusLabelL.centerYAnchor),
+            bonusLabelR.leadingAnchor.constraint(equalTo: g.centerXAnchor, constant: 10),
+ 
+            imageView.topAnchor.constraint(equalTo: bonusLabelL.bottomAnchor, constant: 60 ),
+         imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+            imageView.widthAnchor.constraint(equalTo: g.widthAnchor, multiplier: 0.6),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
             
-            nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 8),
-            nameLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            nameLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
+            nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 22),
+            nameLabel.leadingAnchor.constraint(greaterThanOrEqualTo: g.leadingAnchor, constant: 80),
+            nameLabel.trailingAnchor.constraint(greaterThanOrEqualTo: g.trailingAnchor, constant: 80),
+            nameLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
         
             
             continueBtn.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -66),
@@ -172,8 +232,8 @@ final class FinalViewController: BaseViewController {
         
         NSLayoutConstraint.activate([
             arc.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            arc.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -140 ),
-            arc.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
+            arc.topAnchor.constraint(equalTo: bonusLabelL.bottomAnchor, constant: 30 ),
+            arc.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
             arc.heightAnchor.constraint(equalTo: arc.widthAnchor),
         
    ])
@@ -207,7 +267,8 @@ final class FinalViewController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        stopGapless()
+      navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     
@@ -250,4 +311,35 @@ final class FinalViewController: BaseViewController {
     @objc private func continueTapped() {
         onBest?(vm.userId)
     }
+    
+    
+    
+    private func startGaplessLoop() {
+        guard isSoundOn else {
+            return
+        }
+        let url = Bundle.main.url(forResource: "level2", withExtension: "caf", subdirectory: "Resources/Sound")
+            ?? Bundle.main.url(forResource: "level2", withExtension: "caf")
+        guard let url else { print("level2.caf not found"); return }
+
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch { print(error) }
+
+        let item = AVPlayerItem(url: url)
+        let player = AVQueuePlayer()
+        self.queuePlayer = player
+        self.looper = AVPlayerLooper(player: player, templateItem: item) // infinite
+        player.play()
+    }
+
+    private func stopGapless() {
+        looper?.disableLooping()
+        queuePlayer?.pause()
+        queuePlayer = nil
+        looper = nil
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
 }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class HelpViewController: UIViewController {
+final class HelpViewController: BaseViewController {
     let viewModel: HelpViewModel
     init(viewModel: HelpViewModel) { self.viewModel = viewModel; super.init(nibName:nil,bundle:nil) }
     required init?(coder: NSCoder) { fatalError("init(coder:)") }
@@ -17,12 +17,12 @@ final class HelpViewController: UIViewController {
     let pos: [(Int, Int)] = [(1,1), (3,2), (2,0), (1,2), (0,4), (2,3), (4,2),  ]
     var move = 0
     var isAnimating = false
+  
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Help View"
-        title
-   
+      
         view.backgroundColor = UIColor.lightGray
         card.backgroundColor = .systemBackground
         card.layer.cornerRadius = 16
@@ -56,6 +56,13 @@ final class HelpViewController: UIViewController {
             startLoop()
     }
     
+    
+    override func soundSettingDidChange(isOn: Bool) {
+         // start/stop music or mute SFX for this screen
+        isSoundOn = isOn
+    }
+
+    
         override func viewWillDisappear(_ animated: Bool) {
             super.viewWillDisappear(animated)
             // Only stop when leaving this VC (back or swipe)
@@ -70,10 +77,7 @@ final class HelpViewController: UIViewController {
             animateOnce()
         }
     
-    private func playSound(_ sound: String) {
-        SFX.shared.playIfOn(sound, isOn: viewModel.sound)
-    }
-   
+  
 
         private func animateOnce() {
             guard isAnimating else { return }

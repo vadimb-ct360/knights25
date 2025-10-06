@@ -5,7 +5,6 @@
 //  Created by Vadim on 18. 9. 2025..
 //
 
-// Modules/Best/BestViewModel.swift
 import Foundation
 
 final class BestViewModel {

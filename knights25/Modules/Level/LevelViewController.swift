@@ -6,9 +6,16 @@
 //
 
 import UIKit
+import UIKit
+import AVFoundation
+
+
 
 final class LevelViewController: BaseViewController {
+    private var queuePlayer: AVQueuePlayer?
+    private var looper: AVPlayerLooper?
     private let vm: LevelViewModel
+ 
     var onContinue: ((Int?) -> Void)?
 
     private let scorePill = UIView()
@@ -31,6 +38,13 @@ final class LevelViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        if isSoundOn {
+             startGaplessLoop()
+        }
+   
+
+
         loadBG()
         loadUI()
         setupColorsStrip()
@@ -38,6 +52,16 @@ final class LevelViewController: BaseViewController {
         updateRadiuses()
         bind()
     }
+    
+    override func soundSettingDidChange(isOn: Bool) {
+         // start/stop music or mute SFX for this screen
+        if isOn {
+            startGaplessLoop()
+        } else {
+            stopGapless()
+        }
+    }
+
     
     private func loadBG() {
         view.backgroundColor = .systemBackground
@@ -303,6 +327,9 @@ final class LevelViewController: BaseViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        
+        stopGapless()
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
@@ -320,8 +347,35 @@ final class LevelViewController: BaseViewController {
         }
     }
 
-    @objc private func continueTapped() { onContinue?(vm.nextLevelBestScore) }
-}
-
-
+    @objc private func continueTapped() { onContinue?(vm.nextLevelBestScore)
+    }
   
+
+    private func startGaplessLoop() {
+        guard isSoundOn else {
+            return
+        }
+        let url = Bundle.main.url(forResource: "level", withExtension: "caf", subdirectory: "Resources/Sound")
+            ?? Bundle.main.url(forResource: "level", withExtension: "caf")
+        guard let url else { print("level.caf not found"); return }
+
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch { print(error) }
+
+        let item = AVPlayerItem(url: url)
+        let player = AVQueuePlayer()
+        self.queuePlayer = player
+        self.looper = AVPlayerLooper(player: player, templateItem: item) // infinite
+        player.play()
+    }
+
+    private func stopGapless() {
+        looper?.disableLooping()
+        queuePlayer?.pause()
+        queuePlayer = nil
+        looper = nil
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+}

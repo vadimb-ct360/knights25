@@ -19,14 +19,13 @@ final class PlayViewController: BaseViewController {
     private var lastLevelNum: Int = 0
     private var lastBombNum: Int?
     private var lastBonusNum: Int?
-    
+   
     let viewModel: PlayViewModel
     private var state: GameState { viewModel.state }
     
     private var pieceViews: [[KnightView?]] = []
     private let boardView = UIView()
     
-    private var soundBarButton: UIBarButtonItem?
     private let bonusLabel = PaddedLabel()
     private let inkView = UIView()
     private let scoreLabel = UILabel()
@@ -104,22 +103,7 @@ final class PlayViewController: BaseViewController {
         bestItem.accessibilityLabel = "Escape"
         navigationItem.leftBarButtonItem = bestItem
         
-        // RIGHT: Sound toggle
-        let icon = viewModel.isSoundOn ? "speaker.wave.2.fill" : "speaker.slash.fill"
-        let soundItem: UIBarButtonItem
-        if let img = UIImage(named: viewModel.isSoundOn ? "btnSoundOn" : "btnSoundOff")?.withRenderingMode(.alwaysOriginal) {
-            soundItem = UIBarButtonItem(image: img, style: .plain, target: self, action: #selector(soundTapped))
-        } else {
-            soundItem = UIBarButtonItem(image: UIImage(systemName: icon),
-                                        style: .plain, target: self, action: #selector(soundTapped))
-        }
-        soundItem.accessibilityLabel = "Sound"
-        navigationItem.rightBarButtonItem = soundItem
-        self.soundBarButton = soundItem
-        
-        // Optional tint if you’re using SF Symbols:
-        // navigationController?.navigationBar.tintColor = .label
-    }
+     }
     
     
     @objc private func helpTapped() {
@@ -135,10 +119,7 @@ final class PlayViewController: BaseViewController {
         present(a, animated:true)
     }
   
-    @objc private func soundTapped() {
-        viewModel.toggleSound()
-    }
-    
+  
     private func setupUI() {
         view.backgroundColor = .systemPink
         backgroundImageView.image = UIImage(named: "bg_1")
@@ -457,19 +438,6 @@ final class PlayViewController: BaseViewController {
             renderBonus(state.bonus)
             self.renderMoves(state.remainingMoves)
             levelFinished(finish)
-        }
-        
-        
-        
-        viewModel.onSoundChanged = { [weak self] isOn in
-            guard let self = self else { return }
-            // Update bar button icon
-            if let img = UIImage(named: isOn ? "btnSoundOn" : "btnSoundOff")?.withRenderingMode(.alwaysOriginal) {
-                self.soundBarButton?.image = img
-            } else {
-                self.soundBarButton?.image = UIImage(systemName: isOn ? "speaker.wave.2.fill" : "speaker.slash.fill")
-            }
-            self.soundBarButton?.accessibilityLabel = isOn ? "Sound On" : "Sound Off"
         }
         
         
@@ -1034,11 +1002,7 @@ final class PlayViewController: BaseViewController {
         
     }
     
-    
-    private func playSound(_ sound: String) {
-        SFX.shared.playIfOn(sound, isOn: viewModel.isSoundOn)
-    }
-    
+     
     
     private func playStarBurst(at center: CGPoint,
                                count: Int,
@@ -1178,7 +1142,7 @@ final class PlayViewController: BaseViewController {
         let r1 = rows
         let c1 = NUMROW
         let s = view.frame.width/6
-        
+        var removed = 0
         
         let brush = UIImageView(image: UIImage(named: "brush"))
         brush.frame = CGRect(x: 0, y: -s, width: s*5, height: s*7)
@@ -1199,6 +1163,7 @@ final class PlayViewController: BaseViewController {
                 let id = self.state.board[r][c]
                 guard id == 0 else { continue }
                 if let v = self.pieceViews[r][c] {
+                    removed += 1
                     v.alpha = 0.0
                     v.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
                 }
@@ -1209,7 +1174,7 @@ final class PlayViewController: BaseViewController {
         self.inkView.removeFromSuperview()
         self.inkView.transform  = .identity
         self.viewModel.showLevelView()
-        self.playSound("stolen")
+        self.playSound(removed>0 ? "stolen" : "pink")
     })
 }
     func levelFinished(_ flag: Bool) {
@@ -1230,7 +1195,6 @@ final class PlayViewController: BaseViewController {
         }
     }
     
-    // MARK: - Score animation + sound
     private var scoreDisplayLink: CADisplayLink?
     private var scoreAnimStartTime: CFTimeInterval = 0
     private var scoreAnimDuration: TimeInterval = 0.6
@@ -1238,7 +1202,6 @@ final class PlayViewController: BaseViewController {
     private var scoreAnimTo: Int = 0
     
     func addScore(_ inc: Int) {
-        // Play sound
         playSound("score")
         
         // Setup number tween

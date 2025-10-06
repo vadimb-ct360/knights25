@@ -19,13 +19,14 @@ final class LevelViewModel {
  
     var nextLevelBestScore: Int?
     
-    init(level: Level,
-         totalScore: Int,
-         bestLevelScore: Int,
-         userId: String? = nil,
-         scoreService: ScoreService = DefaultScoreService()) {
-        self.level = level
-        self.totalScore = totalScore
+    init(
+        level: Level,
+        totalScore: Int,
+        bestLevelScore: Int,
+        userId: String? = nil,
+        scoreService: ScoreService = DefaultScoreService()) {
+            self.level = level
+         self.totalScore = totalScore
         self.bestLevelScore = bestLevelScore
         self.userId = userId
         self.scoreService = scoreService

@@ -6,7 +6,6 @@
 //
 
 final class HelpViewModel {
-    var sound: Bool
     let text : [String] = [
         "How to play Knights game",
         "Move knights in L-shape jumping over other knights",
@@ -18,8 +17,5 @@ final class HelpViewModel {
         "",
         "",
      ]
-    init(sound: Bool) {
-        self.sound = sound
-    }
-  
+    
 }

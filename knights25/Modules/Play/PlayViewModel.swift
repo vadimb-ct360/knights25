@@ -15,30 +15,16 @@ final class PlayViewModel {
     
     // setup in Coordinator
     var onShowBest: (() -> Void)?
-    var onShowHelp: ((Bool) -> Void)?
+    var onShowHelp: (() -> Void)?
     
     var onShowLevelView: ((Level, Int) -> Void)?
     var onShowFinalView: ((FinalSummary) -> Void)?
 
-    var onSoundChanged: ((Bool) -> Void)?
     var onLevelFinished: ((Bool) -> Void)?
     var onFreeMove: (() -> Void )?
     
     var onDropKnight: (_ target: (Int, Int)) -> Void = { _ in }
     var onDropTwoKnights: ( _ target1: (Int, Int), _ target2: (Int, Int)) -> Void = { _,_ in }
-    
-    
-    private let soundKey = "soundOn"
-    var isSoundOn: Bool {
-        get {
-            if UserDefaults.standard.object(forKey: soundKey) == nil { return true }
-            return UserDefaults.standard.bool(forKey: soundKey)
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: soundKey)
-            onSoundChanged?(newValue)
-        }
-    }
     
     
     // Bindings to VC
@@ -53,14 +39,12 @@ final class PlayViewModel {
         onStateChanged?(state)
     }
     
-    func toggleSound() { isSoundOn.toggle() }
-    
     func exitToBest() {
         onShowBest?()
     }
     
     func exitToHelp() {
-        onShowHelp?(isSoundOn)
+        onShowHelp?()
     }
     
   
