@@ -15,7 +15,7 @@ class BaseViewController: UIViewController, BannerViewDelegate {
    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupAdBanner()
+  //      setupAdBanner()
     }
     
    

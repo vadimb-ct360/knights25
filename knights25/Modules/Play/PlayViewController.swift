@@ -28,7 +28,7 @@ final class PlayViewController: BaseViewController {
     
     private var soundBarButton: UIBarButtonItem?
     private let bonusLabel = PaddedLabel()
-    
+    private let inkView = UIView()
     private let scoreLabel = UILabel()
     private let scorePill = UIView()
     private let dropsPill = UIView()
@@ -37,7 +37,6 @@ final class PlayViewController: BaseViewController {
     private let bombButton = UIButton(type: .custom)
     private let bombLabel  = UILabel()
     private let lastColorKnight = UIButton(type: .custom)
-    private let lastColorImage = UIImageView()
     private let lastColorLabel  = UILabel()
     
     
@@ -234,13 +233,11 @@ final class PlayViewController: BaseViewController {
         lastColorKnight.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(lastColorKnight)
         
-        lastColorImage.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(lastColorImage)
         
         lastColorLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(lastColorLabel)
         lastColorLabel.text = ""
-        lastColorLabel.textColor = UIColor.white
+        lastColorLabel.textColor = UIColor.white.withAlphaComponent(0.9)
         lastColorLabel.textAlignment = .center
         
         
@@ -334,14 +331,10 @@ final class PlayViewController: BaseViewController {
             lastColorKnight.widthAnchor.constraint(equalTo: clock.widthAnchor, multiplier: 0.95),
             lastColorKnight.heightAnchor.constraint(equalTo: lastColorKnight.widthAnchor),
             
-            lastColorLabel.centerXAnchor.constraint(equalTo: lastColorImage.centerXAnchor),
-            lastColorLabel.centerYAnchor.constraint(equalTo: lastColorImage.centerYAnchor),
+            lastColorLabel.centerXAnchor.constraint(equalTo: lastColorKnight.centerXAnchor),
+            lastColorLabel.centerYAnchor.constraint(equalTo: lastColorKnight.centerYAnchor, constant: 5),
             
-            lastColorImage.centerXAnchor.constraint(equalTo: lastColorKnight.centerXAnchor),
-            lastColorImage.centerYAnchor.constraint(equalTo: lastColorKnight.centerYAnchor),
-            lastColorImage.widthAnchor.constraint(equalTo: lastColorKnight.widthAnchor, multiplier: 0.8),
-            lastColorImage.heightAnchor.constraint(equalTo: lastColorImage.widthAnchor),
-            
+             
             bonusLabel.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 42),
             bonusLabel.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -16),
             
@@ -540,20 +533,13 @@ final class PlayViewController: BaseViewController {
         
         
         if number>0 {
-            let img = UIImage(named: "knight_\(lastColor)")?.withRenderingMode(.alwaysOriginal)
+            let img = UIImage(named: "k_\(lastColor)")?.withRenderingMode(.alwaysOriginal)
             lastColorKnight.setImage(img, for: .normal)
-        
-            lastColorImage.image = UIImage(named: "k_\(lastColor)")
-            lastColorKnight.alpha = 0.5
             lastColorLabel.text =  "\(number)"
-            lastColorImage.isHidden = false
             lastColorLabel.isHidden = false
         } else {
             let img = UIImage(named: "help")?.withRenderingMode(.alwaysOriginal)
             lastColorKnight.setImage(img, for: .normal)
-       
-            lastColorKnight.alpha = 1
-            lastColorImage.isHidden = true
             lastColorLabel.isHidden = true
         }
     
@@ -589,6 +575,7 @@ final class PlayViewController: BaseViewController {
         if moves<3 {
             if moves==1 && state.allowFreeMove {
                 self.playPink()
+                showLastJumpInfo()
             } else {
                 playSound("alarm")
             }
@@ -601,8 +588,8 @@ final class PlayViewController: BaseViewController {
             clock.image = UIImage(named: "clock")!
             movesNumberLabel.textColor = UIColor(cgColor: CGColor(red: 0.99, green: 0.9, blue: 0.8, alpha: 1))
         }
-        dropsPill.alpha = state.remainingMoves>1 ? 1.0 : 0
-    }
+        dropsPill.alpha = moves>1 ? 1.0 : 0
+     }
     
     
     // MARK: Reset all transient UI/state for a new level
@@ -611,14 +598,26 @@ final class PlayViewController: BaseViewController {
         view.isUserInteractionEnabled = true
         navigationController?.navigationBar.isUserInteractionEnabled = true
         navigationController?.interactivePopGestureRecognizer?.isEnabled = true
-        tapHighlightsTimer?.invalidate(); tapHighlightsTimer = nil
-        scoreDisplayLink?.invalidate();   scoreDisplayLink   = nil
+        tapHighlightsTimer?.invalidate()
+        tapHighlightsTimer = nil
+        scoreDisplayLink?.invalidate()
+        scoreDisplayLink   = nil
         
         clearDragHighlights()
         pulsingMergeTargets.removeAll()
-        title = s.level.diablo>0 ? "Keep out upper rows" : s.level.isCleaning ? "Safety level \(s.level.num)" : "Level \(s.level.num)"
+        title = s.level.diablo>0 ? "Keep out top" : s.level.isCleaning ? "Safety level \(s.level.num)" : "Level \(s.level.num)"
         backgroundImageView.image = UIImage(named: s.level.ground)
         
+        if s.level.diablo>0 {
+            let w6 = view.frame.width/6
+            let h6 = CGFloat(s.level.diablo) * w6
+            inkView.frame = CGRect(x: 5, y: 5, width: w6*5-10, height: h6-10)
+            inkView.backgroundColor = .red.withAlphaComponent(0.25)
+            inkView.layer.cornerRadius = 7
+        
+            boardView.addSubview(inkView)
+        }
+   
         
         renderDrops(s.level.drops)
         render(state: s)
@@ -1179,37 +1178,27 @@ final class PlayViewController: BaseViewController {
         let r1 = rows
         let c1 = NUMROW
         let s = view.frame.width/6
-        let h: CGFloat = s * (3 - (CGFloat(rows)+1)/2)
         
-        let ink = UIImageView(image: UIImage(named: "ink"))
-        ink.bounds.size = CGSize(width: 100, height: Int(s) * rows)
-        ink.center = CGPoint(x: view.frame.midX-180, y: view.frame.midY - h)
-        ink.alpha = 0.65
-        view.addSubview(ink)
-   
         
         let brush = UIImageView(image: UIImage(named: "brush"))
-        brush.bounds.size = CGSize(width: s*2.5, height: s*3.5)
-        brush.center = CGPoint(x: view.frame.midX-200, y: view.frame.midY - h)
+        brush.frame = CGRect(x: 0, y: -s, width: s*5, height: s*7)
         brush.alpha = 0.9
-        view.addSubview(brush)
+        boardView.addSubview(brush)
         view.bringSubviewToFront(brush)
             
         self.playSound("sling")
-        brush.transform = CGAffineTransformMakeRotation(-0.5 * .pi)
-        
-    UIView.animate(withDuration: 1.05,
+         
+    UIView.animate(withDuration: 1.25,
                    delay: 0.0,
                    animations: {
         
-        ink.transform = CGAffineTransform(translationX: 250, y: 0).scaledBy(x: 4, y: 1)
-        brush.transform = CGAffineTransform(translationX: 500, y: 0).rotated(by: -0.5 * .pi)
+        self.inkView.transform = CGAffineTransform(translationX: 0, y: 300).scaledBy(x: 1, y: 0.1)
+        brush.transform = CGAffineTransform(translationX: 0, y: 500)
         for r in 0..<r1 {
             for c in 0..<c1 {
                 let id = self.state.board[r][c]
                 guard id == 0 else { continue }
                 if let v = self.pieceViews[r][c] {
-                    print("clear knight [\(r),\(c)]")
                     v.alpha = 0.0
                     v.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
                 }
@@ -1217,7 +1206,8 @@ final class PlayViewController: BaseViewController {
         }
     }, completion: { _ in
         brush.removeFromSuperview()
-        ink.removeFromSuperview()
+        self.inkView.removeFromSuperview()
+        self.inkView.transform  = .identity
         self.viewModel.showLevelView()
         self.playSound("stolen")
     })
@@ -1288,8 +1278,8 @@ final class PlayViewController: BaseViewController {
         // Position a small label above the scoreLabel, animate up & fade
         let pop = UILabel()
         pop.text = text
-        pop.font = .boldSystemFont(ofSize: 16)
-        pop.textColor = UIColor.systemGreen
+        pop.font = AppFont.font(21, weight: .bold)
+        pop.textColor = UIColor.red
         pop.alpha = 0.0
         
         // Place it in the same coordinate space as scoreLabel
@@ -1327,7 +1317,6 @@ final class PlayViewController: BaseViewController {
     private func frameForCell(_ r: Int, _ c: Int) -> CGRect {
         let pad: CGFloat = 0.9
         let s = cellSize > 0 ? cellSize : (boardView.bounds.width / CGFloat(NUMROW))
-        
         return CGRect(x: 2 + CGFloat(c) * s, y: CGFloat(r) * s, width: s*pad, height: s*pad)
     }
     
@@ -1443,6 +1432,7 @@ final class PlayViewController: BaseViewController {
         if bombs > 0 {
             showBrush()
         } else {
+            playSound("merge")
             showNoBombInfo()
         }
     }
@@ -1473,6 +1463,26 @@ final class PlayViewController: BaseViewController {
         
         present(alert, animated: true)
     }
+    
+    private func showLastJumpInfo() {
+        let msg =
+        """
+        Yoo-ho!
+        
+        Jump to empty cell
+        to save all the knights
+        on the board
+        """
+        
+        let alert = UIAlertController(title: "Free ♞ Jump", message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        
+        // gentle notice haptic
+        UINotificationFeedbackGenerator().notificationOccurred(.warning)
+        
+        present(alert, animated: true)
+    }
+  
     
     
 }

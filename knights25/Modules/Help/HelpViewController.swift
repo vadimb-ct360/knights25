@@ -20,7 +20,10 @@ final class HelpViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        title = "Help View"
+        title
+   
+        view.backgroundColor = UIColor.lightGray
         card.backgroundColor = .systemBackground
         card.layer.cornerRadius = 16
         view.addSubview(card)
@@ -118,7 +121,7 @@ final class HelpViewController: UIViewController {
             for c in 0..<5 {
                 let v = UIView()
                 v.frame = frameForCell(r, c)
-                v.backgroundColor =   (r+c) % 2 == 0 ? .white : .lightGray
+                v.backgroundColor =   (r+c) % 2 == 0 ? .white : UIColor(cgColor: CGColor(gray: 0.75, alpha: 1))
                 card.addSubview(v)
             }
         }
@@ -126,7 +129,7 @@ final class HelpViewController: UIViewController {
             let r = p.0
             let c = p.1
             let v = UIImageView(image: UIImage(named: "knight_2"))
-            v.frame = frameForCell(r, c)
+            v.frame = frameForCell(r, c, pad: 0.9)
             v.alpha = (r+c) % 2 == 0 ? 0.7 : 0.6
             card.addSubview(v)
             knights.append(v)
@@ -134,17 +137,16 @@ final class HelpViewController: UIViewController {
         knights[0].alpha = 1
         
         let v = UIImageView(image: UIImage(named: "knight_3"))
-        v.frame = frameForCell(0, 3)
+        v.frame = frameForCell(0, 2, pad: 0.9)
         card.addSubview(v)
         let v2 = UIImageView(image: UIImage(named: "knight_3"))
-        v2.frame = frameForCell(0, 0)
+        v2.frame = frameForCell(0, 0, pad: 0.9)
         card.addSubview(v2)
 
     }
     
-    private func frameForCell(_ r: Int, _ c: Int) -> CGRect {
+    private func frameForCell(_ r: Int, _ c: Int, pad: CGFloat = 1.0) -> CGRect {
         let s = card.bounds.width / CGFloat(5)
-        let pad: CGFloat = 0.9
         return CGRect(x: CGFloat(c) * s, y: CGFloat(r) * s, width: s * pad, height: s * pad)
     }
   

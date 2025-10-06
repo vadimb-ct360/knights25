@@ -81,7 +81,6 @@ final class PlayViewModel {
     
     func bombTapped() {
         gameService.bombTapped(to: &state)
-        state.bomb -= 1
         onStateChanged?(state)
     
     }
@@ -148,7 +147,7 @@ final class PlayViewModel {
                 bonus = gameService.isSuperBonus(in: state)
                 let target = gameService.spawnOneDrop(from:0, to: &state)
                 if bonus>1 {
-                    let b = (bonus - 2)*(bonus - 2)
+                    let b = bonus - 2
                     state.bomb += b
                     let d = (state.level.num + state.bonus) * b
                     state.score += d

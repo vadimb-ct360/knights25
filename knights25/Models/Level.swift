@@ -15,6 +15,7 @@ struct Level: Equatable, Codable {
     var totalBestScore = 0
     var todayBestScore = 0
     var icon: String = "level_2"
+    var levelName: String = "Papa Buba"
     var ground: String = "bg_1"
     var drops: [Int]
     var diablo: Int { num==10 ? 1 : num==13 ? 2 : num==26 ? 3 : 0}
@@ -32,6 +33,18 @@ struct Level: Equatable, Codable {
         ]
         let numColors = n<colors.count ? colors[n] :  2
         
+        let names = [
+           "Papa", "Polgar","Labubu","Bubu", "Mackey",
+           "Lenin","Wane","Steppi","Kuzmic","Icejer",
+           "Leo","Poon","","","",
+           "","","","","",
+           "","","","","",
+           "","","","","",
+           "","","","","",
+         
+            ]
+     
+        
         let moves = [
            15,20,20,15,67,
             25,10,25,10,20,
@@ -42,23 +55,26 @@ struct Level: Equatable, Codable {
         
         let gNum = [
             13, 2, 1, 1, 3,
-            4, 12, 5, 10, 15,
+            4, 12, 11, 10, 15,
             9, 6, 14, 7, 1,
             1, 1, 1, 1, 1,
             2, 8, 11, 9, 12,
-            14, 2, 13, 3, 9,
+            14, 2, 13, 3, 5,
+            6,
         ]
 
         let iNum = [
-            0, 1, 2, 2, 16,
-            4, 22, 15, 7, 29,
-            6, 8, 31, 19, 21,
-            12, 13, 14, 20, 16,
-            17,  9, 10, 18, 12,
-            30, 22, 23, 24, 18,
+            0, 8, 2, 7, 1,
+            15, 22, 4, 14, 29,
+            6, 13, 31, 17, 2,
+            7, 2, 7, 2, 7,
+            11, 0, 21, 18, 12,
+            30, 22, 10, 23, 25,
+            24,
         ]
 
-        let moveQuota: Int = n<moves.count ? moves[n] : 10
+       let moveQuota: Int = n<moves.count ? moves[n] : 10
+    //    let moveQuota: Int = 3
         var drops = (0..<10).map { _ in Int.random(in: 1...numColors) }
         
         if num > 1 && num < 9 {
@@ -81,6 +97,7 @@ struct Level: Equatable, Codable {
         self.drops = drops
         self.ground = n<gNum.count ? "bg_\(gNum[n])" : "bg_1"
         self.icon = n<iNum.count ? "level_\(iNum[n])" : "level_2"
+        self.levelName = n<names.count ? names[n] : "Papa Buba"
     
         
     }

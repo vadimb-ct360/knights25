@@ -22,8 +22,8 @@ final class FinalViewModel {
     var onScoreSaved: (() -> Void)?
  
     let rate: Int
-    var sMax: Int = 10000
-    var bMax: Int = 100
+    var sMax: Int = 15000
+    var bMax: Int = 150
     var lMax: Int = 30
     var title: String = "Donald Trump"
  
@@ -47,7 +47,7 @@ final class FinalViewModel {
     func saveScore(completion: @escaping (Bool) -> Void) {
         
         print("save final score")
-        scoreService.saveScore(userId: userId, score: summary.totalScore, level: 0) { [weak self] result in
+        scoreService.saveScore(userId: userId, score: summary.totalScore, level: 0, rate: rate) { [weak self] result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success:

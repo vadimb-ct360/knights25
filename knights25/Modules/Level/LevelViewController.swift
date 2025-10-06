@@ -90,7 +90,7 @@ final class LevelViewController: BaseViewController {
         imageView.layer.magnificationFilter = .nearest
 
        
-        colorsPill.backgroundColor = UIColor(cgColor: CGColor(red: 0.85, green: 0.55, blue: 0.25, alpha: vm.nextLevel.diablo>0 ? 0.0 : 0.9))
+        colorsPill.backgroundColor = .black.withAlphaComponent( vm.nextLevel.diablo>0 ? 0 : 0.4)
         
         colorsPill.layer.cornerRadius = 70
         colorsPill.layer.cornerCurve = .continuous
@@ -168,19 +168,19 @@ final class LevelViewController: BaseViewController {
             bestLabel.topAnchor.constraint(equalTo: scorePill.bottomAnchor, constant: 6),
             bestLabel.centerXAnchor.constraint(equalTo: scorePill.centerXAnchor),
        
-            nextLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            nextLabel.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 38),
            
             
             imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            imageView.topAnchor.constraint(equalTo: nextLabel.bottomAnchor, constant: 12),
+            imageView.topAnchor.constraint(equalTo: bestLabel.bottomAnchor, constant: 30),
             imageView.widthAnchor.constraint(lessThanOrEqualTo: g.widthAnchor, multiplier: 0.6),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
         
-         
-            statusLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 2),
+            nextLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+            nextLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 4),
+          
+            statusLabel.topAnchor.constraint(equalTo: nextLabel.bottomAnchor, constant: 14),
             statusLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            movesLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 28),
+            movesLabel.topAnchor.constraint(equalTo: nextLabel.bottomAnchor, constant: 40),
             movesLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
 
           
@@ -229,7 +229,7 @@ final class LevelViewController: BaseViewController {
            
             
              
-            colorsPill.topAnchor.constraint(equalTo: nextLabel.topAnchor, constant: -15),
+            colorsPill.topAnchor.constraint(equalTo: imageView.topAnchor, constant: -15),
             colorsPill.bottomAnchor.constraint(equalTo: colorsStrip.bottomAnchor, constant: 20),
             colorsPill.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: -32),
             colorsPill.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 32),

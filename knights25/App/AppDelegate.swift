@@ -16,7 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-  //      addAdMobBanner()
+        addAdMobBanner()
+        addSoundModule()
         addTitleFont()
         return true
     }
@@ -35,16 +36,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
-    
-    private func addAdMobBanner() {
-        
-        MobileAds.shared.start(completionHandler: nil)
+    private func addSoundModule() {
         do {
             // .ambient respects the mute switch. Use .playback to ignore mute switch.
             try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
         } catch { print("AudioSession error:", error) }
-        
+    }
+    
+    private func addAdMobBanner() {
+        MobileAds.shared.start(completionHandler: nil)
     }
     
     

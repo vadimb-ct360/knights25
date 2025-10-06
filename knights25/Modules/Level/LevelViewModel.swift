@@ -45,7 +45,7 @@ final class LevelViewModel {
  
     
     func saveScore(completion: @escaping (Bool) -> Void) {
-            scoreService.saveScore(userId: userId, score: totalScore, level: level.num) { [weak self] result in
+        scoreService.saveScore(userId: userId, score: totalScore, level: level.num, rate: 0) { [weak self] result in
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let info):

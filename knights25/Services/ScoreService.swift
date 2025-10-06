@@ -10,8 +10,8 @@ import Foundation
 enum ScoreLogic {
     static func getRate(for score: Int, _ bonus: Int, _ level: Int) -> [Int] {
         var rate = 1
-        let sMax = 10000
-        let bMax = 100
+        let sMax = 15000
+        let bMax = 150
         let lMax = 30
       
         if score >= sMax/5 { rate += 1 }
@@ -42,7 +42,7 @@ enum ScoreLogic {
 
 protocol ScoreService {
     /// Returns bestLevelScore for NEXT level (N+1) if provided by server
-    func saveScore(userId: String?, score: Int, level: Int,
+    func saveScore(userId: String?, score: Int, level: Int, rate: Int,
                    completion: @escaping (Result<SaveScoreResponse, Error>) -> Void)
   
 }
@@ -58,7 +58,7 @@ struct SaveScoreResponse: Decodable {
 
 final class DefaultScoreService: ScoreService {
     
-    func saveScore(userId: String?, score: Int, level: Int,
+    func saveScore(userId: String?, score: Int, level: Int, rate: Int,
                    completion: @escaping (Result<SaveScoreResponse, Error>) -> Void) {
         var comps = URLComponents()
         comps.scheme = "https"                   // use "http" only if your server isn’t TLS
@@ -67,8 +67,9 @@ final class DefaultScoreService: ScoreService {
         comps.queryItems = [
             .init(name: "userid", value: userId),
             .init(name: "score",  value: String(score)),
-            .init(name: "level",  value: String(level))
-        ]
+            .init(name: "level",  value: String(level)),
+            .init(name: "rate",  value: String(rate))
+    ]
         guard let url = comps.url else {
             return completion(.failure(NSError(domain: "ScoreService", code: -1,
                                                userInfo: [NSLocalizedDescriptionKey: "Bad URL"])))

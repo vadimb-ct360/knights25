@@ -230,6 +230,18 @@ final class DefaultGameService: GameService {
                 }
             }
         }
+        if numc == 1 {
+            state.score += state.bomb * state.level.num
+            state.bomb = 0
+            for r in 0..<state.board.count {
+                for c in 0..<state.board[r].count where state.board[r][c] > 0 {
+                    state.board[r][c] = 2
+                }
+            }
+     
+        } else {
+            state.bomb -= 1
+        }
         
         if numc == 2 && Int.random(in: 0...2) == 0 {
             var r1 = 0
