@@ -34,13 +34,13 @@ struct Level: Equatable, Codable {
         let numColors = n<colors.count ? colors[n] :  2
         
         let names = [
-            "Papa", "Polgar","Labubu","Bubu", "Mackey",
-            "Lenin","Wane","Steppi","Kuzmic","Icejer",
-            "Leo","Poon","","","",
-            "","","","","",
-            "","","","","",
-            "","","","","",
-            "","","","","",
+            "Beggins", "Keepubu","KNavy","Safubu", "Polgar",
+            "Stephano","Wane","Lenin","Olga","Diablo",
+            "Leo","Nikki","Diablo","Keepubu","Aceana",
+            "Safubu","Emma","Keepubu","Mentor","Safubu",
+            "Wabubu","Keepubu","Anandu","Diego","Mario",
+            "Diablo","Emmica","Espozito","GarryK","Keepubu",
+            "Magnus","Fisher","","","",
             
         ]
         
@@ -74,7 +74,7 @@ struct Level: Equatable, Codable {
         ]
         
         let moveQuota: Int = n<moves.count ? moves[n] : 10
-        //    let moveQuota: Int = 3
+      //     let moveQuota: Int = 3
         var drops = (0..<10).map { _ in Int.random(in: 1...numColors) }
         
         if num > 1 && num < 9 {

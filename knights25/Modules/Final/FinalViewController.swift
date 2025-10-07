@@ -200,7 +200,7 @@ final class FinalViewController: BaseViewController {
             bonusLabelR.centerYAnchor.constraint(equalTo: bonusLabelL.centerYAnchor),
             bonusLabelR.leadingAnchor.constraint(equalTo: g.centerXAnchor, constant: 10),
  
-            imageView.topAnchor.constraint(equalTo: bonusLabelL.bottomAnchor, constant: 60 ),
+            imageView.topAnchor.constraint(equalTo: bonusLabelL.bottomAnchor, constant: 66 ),
          imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
             imageView.widthAnchor.constraint(equalTo: g.widthAnchor, multiplier: 0.6),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
@@ -225,7 +225,7 @@ final class FinalViewController: BaseViewController {
     func loadRate() {
         
         arc.translatesAutoresizingMaskIntoConstraints = false
-        arc.configure(rate: 2, maxRate: 10, starSize: CGSize(width: 40, height: 40))
+        arc.configure(rate: 2, maxRate: 10, starSize: CGSize(width: 53, height: 53))
      
         
         view.addSubview(arc)

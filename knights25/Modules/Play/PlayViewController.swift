@@ -133,7 +133,7 @@ final class PlayViewController: BaseViewController {
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        view.addSubview(boardView)
+         view.addSubview(boardView)
         boardView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             boardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -159,14 +159,17 @@ final class PlayViewController: BaseViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
         // Top row with  Drops strip
         
-        // --- SCORE PILL (white rounded rect) ---
-        scorePill.backgroundColor = .brown.withAlphaComponent(0.7)
+        scorePill.backgroundColor = UIColor(cgColor: CGColor(red: 0.8, green: 0.4, blue: 0.2, alpha: 1))
         scorePill.layer.cornerRadius = 21
         scorePill.layer.cornerCurve = .continuous
         scorePill.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scorePill)
         
-        dropsPill.backgroundColor = UIColor(cgColor: CGColor(red: 1, green: 0.75, blue: 0.35, alpha: 1))
+        
+        let cg = CGColor(red: 1, green: 0.8, blue: 0.35, alpha: 1)
+        dropsPill.backgroundColor = UIColor(cgColor: cg)
+        dropsPill.layer.borderWidth = 7
+        dropsPill.layer.borderColor = CGColor(red: 0.9, green: 0.5, blue: 0.2, alpha: 1)
         
         dropsPill.layer.cornerRadius = 23
         dropsPill.layer.cornerCurve = .continuous
@@ -179,8 +182,9 @@ final class PlayViewController: BaseViewController {
         bonusLabel.textColor = .brown
         bonusLabel.layer.masksToBounds = true
         
-        bonusLabel.backgroundColor = UIColor(cgColor: CGColor(red: 1, green: 0.7, blue: 0.3, alpha: 1))
-        
+        bonusLabel.backgroundColor = UIColor(cgColor: cg)
+        colorsStrip.backgroundColor = UIColor(cgColor: cg)
+  
         bonusLabel.layer.cornerRadius = 12
         
         bonusLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -197,9 +201,7 @@ final class PlayViewController: BaseViewController {
         
         clock.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(clock)
-        //    clock.alpha = 0.75
-        
-        
+          
         movesNumberLabel.textColor = UIColor.brown
         movesNumberLabel.textAlignment = .center
         movesNumberLabel.text = "0:10"             // numbers only
@@ -257,7 +259,6 @@ final class PlayViewController: BaseViewController {
         // Layout
         let g = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            // center pill under the title
             
             scorePill.topAnchor.constraint(equalTo: g.topAnchor, constant: 8),
             scorePill.centerXAnchor.constraint(equalTo: g.centerXAnchor),
@@ -275,7 +276,7 @@ final class PlayViewController: BaseViewController {
             
              
             clock.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 2),
-            clock.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor, constant: -10 ),
+            clock.bottomAnchor.constraint(equalTo: dropsStack.centerYAnchor ),
             clock.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 2),
             
             clock.widthAnchor.constraint(equalTo: clock.heightAnchor),
@@ -287,13 +288,13 @@ final class PlayViewController: BaseViewController {
         
             // Drops stack on right
             dropsStack.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-            dropsStack.topAnchor.constraint(equalTo: scorePill.bottomAnchor, constant: 30),
+            dropsStack.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: -40),
             dropsStack.heightAnchor.constraint(equalToConstant: dropSlotSize),
             
             dropsPill.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor ),
-            dropsPill.leadingAnchor.constraint(equalTo: dropsStack.leadingAnchor, constant: -12 ),
-            dropsPill.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 1.4),
-            dropsPill.trailingAnchor.constraint(equalTo: dropsStack.trailingAnchor, constant: 12 ),
+            dropsPill.leadingAnchor.constraint(equalTo: dropsStack.leadingAnchor, constant: -20 ),
+            dropsPill.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 1.75),
+            dropsPill.trailingAnchor.constraint(equalTo: dropsStack.trailingAnchor, constant: 20 ),
          
             
             d6.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor),
@@ -308,7 +309,7 @@ final class PlayViewController: BaseViewController {
    
            
             lastColorKnight.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -1),
-            lastColorKnight.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor, constant: -10),
+            lastColorKnight.bottomAnchor.constraint(equalTo: dropsStack.centerYAnchor),
             lastColorKnight.widthAnchor.constraint(equalTo: clock.widthAnchor, multiplier: 0.95),
             lastColorKnight.heightAnchor.constraint(equalTo: lastColorKnight.widthAnchor),
             
@@ -327,8 +328,7 @@ final class PlayViewController: BaseViewController {
     
     
     private func setupColorsStrip() {
-        colorsStrip.backgroundColor = UIColor(cgColor: CGColor(red: 1, green: 0.7, blue: 0.3, alpha: 1))
-        
+         
         colorsStrip.layer.cornerRadius = 10
         colorsStrip.layer.cornerCurve = .continuous
         colorsStrip.layer.shadowColor = UIColor.black.withAlphaComponent(0.15).cgColor
@@ -456,7 +456,7 @@ final class PlayViewController: BaseViewController {
                 self.prevScore = state.score
                 
                 if self.lastLevelNum != state.level.num {
-                    self.title = "Level \(state.level.num)"
+                    self.title = "\(state.level.num). \(state.level.levelName)"
                     self.playSound("level")
                     self.lastLevelNum = state.level.num
                     self.resetForNewLevel(using: state)
@@ -573,7 +573,7 @@ final class PlayViewController: BaseViewController {
         
         clearDragHighlights()
         pulsingMergeTargets.removeAll()
-        title = s.level.diablo>0 ? "Keep out top" : s.level.isCleaning ? "Safety level \(s.level.num)" : "Level \(s.level.num)"
+        title = "\(s.level.num). \(state.level.levelName)"
         backgroundImageView.image = UIImage(named: s.level.ground)
         
         if s.level.diablo>0 {

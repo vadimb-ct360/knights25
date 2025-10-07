@@ -12,6 +12,7 @@ final class HelpViewController: BaseViewController {
     init(viewModel: HelpViewModel) { self.viewModel = viewModel; super.init(nibName:nil,bundle:nil) }
     required init?(coder: NSCoder) { fatalError("init(coder:)") }
     let card = UIView()
+    let helpLabel = UILabel()
     let status = UILabel()
     var knights = [UIImageView]()
     let pos: [(Int, Int)] = [(1,1), (3,2), (2,0), (1,2), (0,4), (2,3), (4,2),  ]
@@ -21,15 +22,21 @@ final class HelpViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Help View"
       
-        view.backgroundColor = UIColor.lightGray
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.9)
         card.backgroundColor = .systemBackground
         card.layer.cornerRadius = 16
         view.addSubview(card)
         card.translatesAutoresizingMaskIntoConstraints = false
         
         
+        helpLabel.text = "How to Play"
+        helpLabel.textAlignment = .center
+        helpLabel.font = AppFont.font(25, weight: .bold)
+        helpLabel.textColor = .white
+        view.addSubview(helpLabel)
+        helpLabel.translatesAutoresizingMaskIntoConstraints = false
+  
         status.text = viewModel.text[0]
         status.textAlignment = .center
         status.font = AppFont.font(21, weight: .semibold)
@@ -37,15 +44,19 @@ final class HelpViewController: BaseViewController {
         status.numberOfLines = 0
         view.addSubview(status)
         status.translatesAutoresizingMaskIntoConstraints = false
-  
+        let g = view.safeAreaLayoutGuide
+     
         NSLayoutConstraint.activate([
+            helpLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+            helpLabel.topAnchor.constraint(equalTo: g.topAnchor, constant: 20),
+       
             card.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             card.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             card.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
              card.heightAnchor.constraint(equalTo: card.widthAnchor),
-            status.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
+             status.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
              status.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            status.bottomAnchor.constraint(equalTo: card.topAnchor, constant: -50),
+                status.bottomAnchor.constraint(equalTo: card.topAnchor, constant: -40),
   
         ])
       }

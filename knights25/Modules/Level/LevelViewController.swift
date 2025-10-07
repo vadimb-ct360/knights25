@@ -101,8 +101,8 @@ final class LevelViewController: BaseViewController {
         scorePill.layer.cornerRadius = 120
         scorePill.layer.cornerCurve = .continuous
        
-        
-        nextLabel.text = vm.nextLevel.diablo>0 ? "Next Level \(vm.nextLevel.num)\nDiablo Level" : vm.nextLevel.isCleaning ? "Next Level \(vm.nextLevel.num)\nSafety Level" : "Next Level \(vm.nextLevel.num)"
+        nextLabel.textAlignment = .center
+        nextLabel.text =  "Next Level \(vm.nextLevel.num)\n\"\(vm.nextLevel.levelName)\""
         nextLabel.font = AppFont.font(23, weight: .bold)
         nextLabel.textColor = .white
         nextLabel.numberOfLines = 0

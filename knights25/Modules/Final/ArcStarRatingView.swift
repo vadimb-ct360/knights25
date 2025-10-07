@@ -12,8 +12,8 @@ final class ArcStarRatingView: UIView {
     // MARK: Public API
     var rate: Int = 0 { didSet { rate = max(0, min(rate, maxRate)); refresh() } }
     var maxRate: Int = 10 { didSet { maxRate = max(1, maxRate); refresh() } }
-    var starSize: CGSize = CGSize(width: 28, height: 28) { didSet { refresh() } }
-    var arcDegrees: CGFloat = 180 { didSet { refresh() } }
+    var starSize: CGSize = CGSize(width: 53, height: 53) { didSet { refresh() } }
+    var arcDegrees: CGFloat = 160 { didSet { refresh() } }
     
     // MARK: Images
     var filledImage: UIImage? = UIImage(named: "star_star")
@@ -80,10 +80,7 @@ final class ArcStarRatingView: UIView {
         let theta = arcDegrees * .pi / 180
         let radius = chord/2
 
-        // Same center as before
-        let centerX = bounds.midX
-        let centerY = bounds.midY
-        let circleCenter = CGPoint(x: centerX, y: 0)
+        let circleCenter = CGPoint(x: bounds.midX, y: 0)
 
    
         // ---- Position stars along the arc ----
