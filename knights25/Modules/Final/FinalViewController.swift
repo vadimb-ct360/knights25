@@ -166,11 +166,11 @@ final class FinalViewController: BaseViewController {
         
         let g = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: g.topAnchor, constant: 8),
+            titleLabel.topAnchor.constraint(equalTo: g.topAnchor, constant: 2),
             titleLabel.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 20),
             titleLabel.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -20),
             
-            scoreLabelL.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
+            scoreLabelL.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             scoreLabelL.trailingAnchor.constraint(equalTo: g.centerXAnchor),
          
             scoreLabelR.centerYAnchor.constraint(equalTo: scoreLabelL.centerYAnchor),

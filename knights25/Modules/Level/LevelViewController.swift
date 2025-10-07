@@ -104,7 +104,7 @@ final class LevelViewController: BaseViewController {
         
         nextLabel.text = vm.nextLevel.diablo>0 ? "Next Level \(vm.nextLevel.num)\nDiablo Level" : vm.nextLevel.isCleaning ? "Next Level \(vm.nextLevel.num)\nSafety Level" : "Next Level \(vm.nextLevel.num)"
         nextLabel.font = AppFont.font(23, weight: .bold)
-        nextLabel.textColor = vm.nextLevel.diablo==1 ? .blue : .white
+        nextLabel.textColor = .white
         nextLabel.numberOfLines = 0
     
       

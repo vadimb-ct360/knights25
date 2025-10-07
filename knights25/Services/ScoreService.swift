@@ -10,8 +10,8 @@ import Foundation
 enum ScoreLogic {
     static func getRate(for score: Int, _ bonus: Int, _ level: Int) -> [Int] {
         var rate = 1
-        let sMax = 15000
-        let bMax = 150
+        let sMax = 25000
+        let bMax = 200
         let lMax = 30
       
         if score >= sMax/5 { rate += 1 }

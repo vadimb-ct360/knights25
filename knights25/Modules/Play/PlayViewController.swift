@@ -1156,7 +1156,7 @@ final class PlayViewController: BaseViewController {
                    delay: 0.0,
                    animations: {
         
-        self.inkView.transform = CGAffineTransform(translationX: 0, y: 300).scaledBy(x: 1, y: 0.1)
+        self.inkView.transform = CGAffineTransform(translationX: 0, y: 420).scaledBy(x: 1, y: 0.1)
         brush.transform = CGAffineTransform(translationX: 0, y: 500)
         for r in 0..<r1 {
             for c in 0..<c1 {
