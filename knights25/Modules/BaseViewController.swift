@@ -25,7 +25,7 @@ class BaseViewController: UIViewController, BannerViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //      setupAdBanner()
+        setupAdBanner()
         if showsSoundButton {
             navigationItem.rightBarButtonItems = [soundItem] + (navigationItem.rightBarButtonItems ?? [])
             updateSoundItem()

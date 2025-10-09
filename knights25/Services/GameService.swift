@@ -238,7 +238,6 @@ final class DefaultGameService: GameService {
                     state.board[r][c] = 2
                 }
             }
-     
         } else {
             state.bomb -= 1
         }
@@ -253,10 +252,27 @@ final class DefaultGameService: GameService {
                     state.board[r][c] = 0
                 }
             }
-            
             state.board[r1][c1] = 6
             state.board[r1>2 ? r1-2 : r1 + 2][c1>1 ? c1-1 : c1 + 1] = 6
         }
+        
+        if (numc > 2 && numc < 12) && numShift == 0 {
+            for _ in 0...100 {
+                let r1 = Int.random(in: 2...4)
+                let r2 = Int.random(in: 2...4)
+                let c1 = Int.random(in: 0...4)
+                let c2 = Int.random(in: 0...4)
+                
+                let b1 = state.board[r1][c1]
+                let b2 = state.board[r2][c2]
+                state.board[r1][c1] = b2
+                state.board[r2][c2] = b1
+            }
+         
+        }
+        
+        
+        
         state.score += numc + numShift * state.level.num
     }
     
@@ -314,6 +330,17 @@ final class DefaultGameService: GameService {
                 state.board[r][c] = 0
             }
         }
+        var numc = 0
+        for r in 0..<state.board.count {
+            for c in 0..<state.board[r].count where state.board[r][c] > 0 {
+                numc += 1
+            }
+        }
+        
+        if numc==0 {
+            state.board[state.board.count-1][2] = 2
+        }
+         
         return nc
         
     }

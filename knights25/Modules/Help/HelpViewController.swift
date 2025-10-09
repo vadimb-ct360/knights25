@@ -93,10 +93,10 @@ final class HelpViewController: BaseViewController {
         private func animateOnce() {
             guard isAnimating else { return }
             
-            move = move<pos.count-1 ? move + 1 : 0
-            let m = min(3,move)
+             let m = 1 + (min(6,move)-1) % 3
          
             let sound = move>0 ? "merge_\(m)" : "clear"
+            move = move<pos.count-1 ? move + 1 : 0
             let ps =  pos[0]
             let pt =  pos[move]
             let fs = frameForCell(ps.0, ps.1)
