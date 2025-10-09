@@ -10,12 +10,12 @@ struct Level: Equatable, Codable {
     let moveQuota: Int
     let numColors: Int
     let isCleaning: Bool
-    var bestScore = 0
+    var bestScore = 102
     var totalBestScore = 0
     var todayBestScore = 0
-    var icon: String = "level_2"
+    var icon: String = "level_0"
     var levelName: String = "Papa Buba"
-    var ground: String = "bg_1"
+    var ground: String = "bg_0"
     var drops: [Int]
     var diablo: Int { num==9 ? 1 : (num==14 || num==12) ? 2 : (num==19 || num==21) ? 3 : num==24 ? 4 : 0}
     
@@ -38,35 +38,38 @@ struct Level: Equatable, Codable {
             "Vaterflo","Diablo-2","Nikki","Diablo-2","Labu Keep",
             "Emma","M-mccay","Mario","Diablo-3","Boo Keep",
             "Diablo-3","Phil","Diego","Diablo-4","Last Keeper",
-            "GarryK","Fisher","Magnus","Watubu","Baggins",
+            "GarryK","Fisher","Magnus","Stepan", "Watubu",
+            "Baggins",
              
         ]
         
         
         let moves = [
             15,20,20,15,67,
-            25,10,30,25,10,
-            20,10,20,10,15,
-            10,15,10,20,15,
-            20,10,10,20,15,
+            25,25,30,25,15,
+            10,20,10,20,15,
+            10,10,10,20,15,
+            20,10,10,20,10,
             20,10,10,10,10]
         
         let gNum = [
-            13, 1, 2, 1, 3,
-            9, 15, 11, 14, 1,
-            7, 14, 6, 14,   1,
-            5,  8, 12, 14, 1,
-            14, 9, 13, 14, 1,
-            17, 16, 15, 7, 11,
+            13, 0, 2, 0, 3,
+            10, 15, 11, 1, 0,
+            7, 1, 6, 1,  0,
+            5,  8, 12, 1, 0,
+            1, 10, 13, 1, 0,
+            17, 16, 15, 4, 0,
+            9,
         ]
         
         let iNum = [
-            0, 2, 8, 2, 1,
-            6,  22,  4, 20, 2,
-            17, 20, 13, 20, 2,
-            7, 16, 12, 20,  2,
-            20, 18, 10, 20, 2,
-            23, 27, 24, 11, 9,
+            0, 0, 8, 0, 2,
+            6,  22,  4, 1, 0,
+            17, 1, 13, 1, 0,
+            7, 16, 12, 1,  0,
+            1, 18, 10, 1, 0,
+            23, 27, 24, 15, 0,
+            9,
         ]
         
         let moveQuota: Int = n<moves.count ? moves[n] : 10
@@ -74,13 +77,13 @@ struct Level: Equatable, Codable {
         var drops = (0..<10).map { _ in Int.random(in: 1...numColors) }
         
         if num > 1 && num < 9 {
-            for i in  0..<4 {
+            for i in  0..<3 {
                 drops[i] = numColors
             }
         }
         if num >= 9 {
             let color = Int.random(in: 1...numColors)
-            for i in 0..<3 {
+            for i in 0..<2 {
                 drops[i] = color
             }
         }
@@ -88,7 +91,7 @@ struct Level: Equatable, Codable {
         self.num = num
         self.moveQuota = moveQuota
         self.numColors = numColors
-        self.isCleaning = num==10 || num==15 || num==20 || num==25 || num==29 || num==2 || num==4
+        self.isCleaning = num==10 || num==15 || num==20 || num==25 || num==30 || num==2 || num==4
         self.drops = drops
         self.ground = n<gNum.count ? "bg_\(gNum[n])" : "bg_11"
         self.icon = n<iNum.count ? "level_\(iNum[n])" : "level_9"

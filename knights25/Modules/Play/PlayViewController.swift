@@ -392,7 +392,7 @@ final class PlayViewController: BaseViewController {
         
         scoreLabel.font = AppFont.font(25, weight: .bold)
         bonusLabel.font = AppFont.font(21, weight: .bold)
-        movesNumberLabel.font = AppFont.font(25, weight: .bold)
+        movesNumberLabel.font = AppFont.font(27, weight: .extrabold)
         lastColorLabel.font = AppFont.font(21, weight: .bold)
         bombLabel.text = ""
         bombLabel.font = AppFont.font(23, weight: .bold)
