@@ -15,11 +15,11 @@ final class PlayViewController: BaseViewController {
     
     private var uiLockCount = 0
     private var displayedScore: Int = 0
-    private var prevScore: Int = 0  // to detect deltas from state
+    private var prevScore: Int = 0
     private var lastLevelNum: Int = 0
     private var lastBombNum: Int?
     private var lastBonusNum: Int?
-   
+    
     let viewModel: PlayViewModel
     private var state: GameState { viewModel.state }
     
@@ -39,13 +39,14 @@ final class PlayViewController: BaseViewController {
     private let lastColorLabel  = UILabel()
     
     
-    private let movesNumberLabel = UILabel()     // numbers only
+    private let movesNumberLabel = UILabel()
     private let dropsStack = UIStackView()
     private var dropSlots: [UIImageView] = []
     private let dropSlotSize: CGFloat = 36
     
-    private var highlightOverlays: [UIView] = []     // empty-cell highlights
-    private var pulsingMergeTargets: [KnightView] = [] // pulsing same-color pieces
+    private var highlightOverlays: [UIView] = []
+    private var pulsingMergeTargets: [KnightView] = []
+    
     private var tapHighlightsTimer: Timer?
     
     
@@ -61,7 +62,7 @@ final class PlayViewController: BaseViewController {
     private let backgroundImageView = UIImageView()
     
     private let bgImageView: UIImageView = {
-        let iv = UIImageView(image: UIImage(named: "board"))
+        let iv = UIImageView(image: UIImage(named: "bg_19"))
         iv.contentMode = .scaleToFill
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
@@ -72,6 +73,8 @@ final class PlayViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = false
+        
+        navigationItem.backButtonTitle = "Back"          
         setupUI()
         setupHUD()
         setupNavBarButtons()
@@ -90,7 +93,7 @@ final class PlayViewController: BaseViewController {
                        animations: {
             self.boardView.transform = .identity
         })
-  
+        
         
     }
     
@@ -100,7 +103,6 @@ final class PlayViewController: BaseViewController {
     
     
     private func setupNavBarButtons() {
-        // LEFT: Best scores (use SF Symbol or your jelly asset)
         let bestItem: UIBarButtonItem
         if let img = UIImage(named: "btnBest")?.withRenderingMode(.alwaysOriginal) {
             bestItem = UIBarButtonItem(image: img, style: .plain, target: self, action: #selector(bestTapped))
@@ -111,23 +113,21 @@ final class PlayViewController: BaseViewController {
         bestItem.accessibilityLabel = "Escape"
         navigationItem.leftBarButtonItem = bestItem
         
-     }
+    }
     
     
     @objc private func helpTapped() {
-        // route via VM -> Coordinator.showHelp()
         viewModel.exitToHelp()
     }
     
     @objc private func bestTapped() {
-        // route via VM -> Coordinator.showBest()
         let a = UIAlertController(title:"Escape game?", message:"View Today Best Scores And Restart Game", preferredStyle:.alert)
         a.addAction(UIAlertAction(title:"Cancel", style:.cancel))
         a.addAction(UIAlertAction(title:"OK", style:.destructive){ _ in self.viewModel.exitToBest() })
         present(a, animated:true)
     }
-  
-  
+    
+    
     private func setupUI() {
         view.backgroundColor = .systemPink
         backgroundImageView.image = UIImage(named: "bg_13")
@@ -141,11 +141,11 @@ final class PlayViewController: BaseViewController {
             backgroundImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             backgroundImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-         view.addSubview(boardView)
+        view.addSubview(boardView)
         boardView.translatesAutoresizingMaskIntoConstraints = false
         
         boardView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
- 
+        
         NSLayoutConstraint.activate([
             boardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             boardView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -168,7 +168,6 @@ final class PlayViewController: BaseViewController {
     
     private func setupHUD() {
         navigationController?.setNavigationBarHidden(false, animated: false)
-        // Top row with  Drops strip
         
         scorePill.backgroundColor = UIColor(cgColor: CGColor(red: 0.8, green: 0.4, blue: 0.2, alpha: 1))
         scorePill.layer.cornerRadius = 21
@@ -195,7 +194,7 @@ final class PlayViewController: BaseViewController {
         
         bonusLabel.backgroundColor = UIColor(cgColor: cg)
         colorsStrip.backgroundColor = UIColor(cgColor: cg)
-  
+        
         bonusLabel.layer.cornerRadius = 12
         
         bonusLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -212,18 +211,18 @@ final class PlayViewController: BaseViewController {
         
         clock.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(clock)
-          
+        
         movesNumberLabel.textColor = UIColor.brown
         movesNumberLabel.textAlignment = .center
-        movesNumberLabel.text = "0:10"             // numbers only
+        movesNumberLabel.text = "0:10"
         movesNumberLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(movesNumberLabel)
         
         
         lastColorKnight.setImage(UIImage(named: "help"), for: .normal)
-   
+        
         lastColorKnight.addTarget(self, action: #selector(helpTapped), for: .touchUpInside)
-       
+        
         lastColorKnight.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(lastColorKnight)
         
@@ -237,9 +236,6 @@ final class PlayViewController: BaseViewController {
         
         view.bringSubviewToFront(boardView)
         
-        
-        
-        // Drops stack (right-aligned)
         dropsStack.axis = .horizontal
         dropsStack.alignment = .center
         dropsStack.spacing = 0
@@ -266,38 +262,33 @@ final class PlayViewController: BaseViewController {
         dropSlots.append(d7)
         view.addSubview(d6)
         view.addSubview(d7)
-      
-        // Layout
+        
         let g = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             
             scorePill.topAnchor.constraint(equalTo: g.topAnchor, constant: 8),
             scorePill.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-      
+            
             coin.centerYAnchor.constraint(equalTo: scorePill.centerYAnchor),
             coin.leadingAnchor.constraint(equalTo: scorePill.leadingAnchor, constant: 5),
             coin.heightAnchor.constraint(equalToConstant: dropSlotSize+4),
             coin.widthAnchor.constraint(equalTo: coin.heightAnchor),
             
-            // pill hugs content (not full width)
             scoreLabel.topAnchor.constraint(equalTo: scorePill.topAnchor, constant: 8),
             scoreLabel.bottomAnchor.constraint(equalTo: scorePill.bottomAnchor, constant: -8),
             scoreLabel.leadingAnchor.constraint(equalTo: coin.trailingAnchor, constant: 5),
             scoreLabel.trailingAnchor.constraint(equalTo: scorePill.trailingAnchor, constant: -15),
             
-             
+            
             clock.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 2),
             clock.bottomAnchor.constraint(equalTo: dropsStack.centerYAnchor ),
             clock.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 2),
             
             clock.widthAnchor.constraint(equalTo: clock.heightAnchor),
             
-            // Moves label inside with padding
             movesNumberLabel.centerXAnchor.constraint(equalTo: clock.centerXAnchor),
             movesNumberLabel.centerYAnchor.constraint(equalTo: clock.centerYAnchor),
             
-        
-            // Drops stack on right
             dropsStack.centerXAnchor.constraint(equalTo: g.centerXAnchor),
             dropsStack.bottomAnchor.constraint(equalTo: boardView.topAnchor, constant: -40),
             dropsStack.heightAnchor.constraint(equalToConstant: dropSlotSize),
@@ -306,19 +297,19 @@ final class PlayViewController: BaseViewController {
             dropsPill.leadingAnchor.constraint(equalTo: dropsStack.leadingAnchor, constant: -20 ),
             dropsPill.heightAnchor.constraint(equalTo: dropsStack.heightAnchor, multiplier: 1.75),
             dropsPill.trailingAnchor.constraint(equalTo: dropsStack.trailingAnchor, constant: 20 ),
-         
+            
             
             d6.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor),
             d6.leadingAnchor.constraint(equalTo: g.trailingAnchor, constant: dropSlotSize),
             d6.widthAnchor.constraint(equalToConstant: dropSlotSize),
             d6.heightAnchor.constraint(equalToConstant: dropSlotSize),
-   
+            
             d7.centerYAnchor.constraint(equalTo: dropsStack.centerYAnchor),
             d7.leadingAnchor.constraint(equalTo: g.trailingAnchor, constant: dropSlotSize),
             d7.widthAnchor.constraint(equalToConstant: dropSlotSize),
             d7.heightAnchor.constraint(equalToConstant: dropSlotSize),
-   
-           
+            
+            
             lastColorKnight.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -1),
             lastColorKnight.bottomAnchor.constraint(equalTo: dropsStack.centerYAnchor),
             lastColorKnight.widthAnchor.constraint(equalTo: clock.widthAnchor, multiplier: 0.95),
@@ -327,11 +318,11 @@ final class PlayViewController: BaseViewController {
             lastColorLabel.centerXAnchor.constraint(equalTo: lastColorKnight.centerXAnchor),
             lastColorLabel.centerYAnchor.constraint(equalTo: lastColorKnight.centerYAnchor, constant: 5),
             
-             
+            
             bonusLabel.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 42),
             bonusLabel.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -16),
             
-          
+            
             
         ])
         
@@ -339,7 +330,7 @@ final class PlayViewController: BaseViewController {
     
     
     private func setupColorsStrip() {
-         
+        
         colorsStrip.layer.cornerRadius = 10
         colorsStrip.layer.cornerCurve = .continuous
         colorsStrip.layer.shadowColor = UIColor.black.withAlphaComponent(0.15).cgColor
@@ -361,7 +352,6 @@ final class PlayViewController: BaseViewController {
             
             colorsStrip.leadingAnchor.constraint(equalTo: g.leadingAnchor, constant: 12),
             
-            // Stack inside with padding; strip width follows content
             colorsStack.topAnchor.constraint(equalTo: colorsStrip.topAnchor, constant: 10),
             colorsStack.bottomAnchor.constraint(equalTo: colorsStrip.bottomAnchor, constant: -10),
             colorsStack.leadingAnchor.constraint(equalTo: colorsStrip.leadingAnchor, constant: 12),
@@ -369,7 +359,6 @@ final class PlayViewController: BaseViewController {
             
         ])
         
-        // Make the pill hug its content (don’t stretch)
         colorsStrip.setContentHuggingPriority(.required, for: .horizontal)
         colorsStrip.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
@@ -387,7 +376,6 @@ final class PlayViewController: BaseViewController {
             iv.heightAnchor.constraint(equalToConstant: iconSize).isActive = true
             colorsStack.addArrangedSubview(iv)
         }
-        // Update corner radius to match new height
         colorsStrip.layoutIfNeeded()
         bonusLabel.layoutIfNeeded()
         scorePill.layoutIfNeeded()
@@ -411,20 +399,17 @@ final class PlayViewController: BaseViewController {
         bombLabel.textAlignment = .center
         bombLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        // 57x57 image-only button
         bombButton.translatesAutoresizingMaskIntoConstraints = false
         bombButton.imageView?.contentMode = .scaleAspectFit
         bombButton.accessibilityLabel = "Bomb"
         bombButton.addTarget(self, action: #selector(bombTapped), for: .touchUpInside)
         
-        // In setupBombButton()
         bombButton.addTarget(self, action: #selector(bombDown), for: [.touchDown, .touchDragEnter])
         bombButton.addTarget(self, action: #selector(bombUp),   for: [.touchUpInside, .touchCancel, .touchDragExit])
         view.addSubview(bombButton)
         view.addSubview(bombLabel)
         
         NSLayoutConstraint.activate([
-            // Centered above the colors strip
             bombButton.centerXAnchor.constraint(equalTo: boardView.centerXAnchor),
             bombButton.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 75),
             bombButton.heightAnchor.constraint(equalToConstant: 72),
@@ -482,7 +467,7 @@ final class PlayViewController: BaseViewController {
                 
                 
                 self.renderLastColor(state.lastColor, number: state.numLastColor)
-                  
+                
                 self.renderBonus(state.bonus)
                 self.renderMoves(state.remainingMoves)
                 self.updateBombButton(bombs: state.bomb)
@@ -504,7 +489,7 @@ final class PlayViewController: BaseViewController {
             self.unlockUI()
             self.render(state: state)
         }
-     }
+    }
     
     
     
@@ -521,9 +506,9 @@ final class PlayViewController: BaseViewController {
             lastColorKnight.setImage(img, for: .normal)
             lastColorLabel.isHidden = true
         }
-    
+        
     }
-  
+    
     func renderBonus(_ bns: Int) {
         bonusLabel.textColor = state.allowFreeMove ? .red : .black
         bonusLabel.text = "♥︎\(bns)"  //🖤♡
@@ -568,7 +553,7 @@ final class PlayViewController: BaseViewController {
             movesNumberLabel.textColor = UIColor(cgColor: CGColor(red: 0.99, green: 0.9, blue: 0.8, alpha: 1))
         }
         dropsPill.alpha = moves>1 ? 1.0 : 0
-     }
+    }
     
     
     // MARK: Reset all transient UI/state for a new level
@@ -595,11 +580,11 @@ final class PlayViewController: BaseViewController {
             inkView.layer.cornerRadius = 13
             inkView.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
             inkView.layer.borderWidth = 8
-       
-        
+            
+            
             boardView.addSubview(inkView)
         }
-   
+        
         
         renderDrops(s.level.drops)
         render(state: s)
@@ -625,11 +610,8 @@ final class PlayViewController: BaseViewController {
     
     private func animateDropStripShift(completion: (() -> Void)? = nil) {
         let lastDrop = NUMDROPS-1
-        // Ensure slot 0 is hidden at start of the shift (it was consumed/flying)
         dropSlots[0].alpha = 0.0
         
-        
-        // Helper: animate slot i → slot (i-1), then recurse
         for i in 1...lastDrop {
             let from = dropSlots[i]
             let to   = dropSlots[i-1]
@@ -692,8 +674,6 @@ final class PlayViewController: BaseViewController {
     }
     
     
-    
-    // Make sure this helper returns the view so we can animate it after landing.
     @discardableResult
     private func addPieceView(id: Int, at pos: (Int,Int)) -> KnightView {
         let v = KnightView(colorId: id, index: pos)
@@ -729,7 +709,7 @@ final class PlayViewController: BaseViewController {
             
         case .ended, .cancelled, .failed:
             tapHighlightsTimer?.invalidate()
-            clearDragHighlights()          // ✅ stop pulsing immediately on release
+            clearDragHighlights()
         default:
             break
         }
@@ -816,7 +796,6 @@ final class PlayViewController: BaseViewController {
                 flyers[1].removeFromSuperview()
                 self.playSound("bonus")
                 
-                // Now that the drop finished flying, shift the strip
                 self.render(state: self.state)
                 self.viewModel.shiftDrops()
                 self.viewModel.shiftDrops()
@@ -834,12 +813,10 @@ final class PlayViewController: BaseViewController {
     
     
     private func animateDrop(index: Int, to target: (Int, Int)) {
-        // Ensure the target cell stays hidden while we animate the flyer.
         
         unlockUI()
         let sourceView = dropSlots[index]
         
-        // Convert source (drop slot) rect into boardView coords.
         let srcInSelf  = sourceView.superview?.convert(sourceView.frame, to: self.view) ?? .zero
         let srcInBoard = self.view.convert(srcInSelf, to: boardView)
         
@@ -850,7 +827,6 @@ final class PlayViewController: BaseViewController {
         
         self.viewModel.shiftDrops()
         
-        // Flyer sprite on top
         let flyer = UIImageView(image: knightImage(color))
         flyer.contentMode = .scaleAspectFit
         flyer.frame = srcInBoard
@@ -866,8 +842,7 @@ final class PlayViewController: BaseViewController {
             
             UIView.animate(withDuration: 0.51,
                            delay: 0,
-                           usingSpringWithDamping: 0.4,     // < 1.0 = bouncy
-                           initialSpringVelocity: 0.0,
+                           usingSpringWithDamping: 0.4, initialSpringVelocity: .zero,
                            options: [ .allowUserInteraction],
                            animations: {
                 flyer.frame = targetFrame
@@ -887,7 +862,6 @@ final class PlayViewController: BaseViewController {
     
     
     private func knightImage(_ id: Int) -> UIImage? {
-        // asset names: knight_1, knight_2, ...
         UIImage(named: "knight_\(id)")?.withRenderingMode(.alwaysOriginal)
     }
     
@@ -1016,7 +990,7 @@ final class PlayViewController: BaseViewController {
         
     }
     
-     
+    
     
     private func playStarBurst(at center: CGPoint,
                                count: Int,
@@ -1026,11 +1000,9 @@ final class PlayViewController: BaseViewController {
     )
     {
         guard let star = UIImage(named: imageName) else { return }
-        boardView.clipsToBounds = false  // allow flying out
-        
+        boardView.clipsToBounds = false
         
         for i in 0..<count {
-            // base angle evenly spaced + tiny jitter so it’s not “perfect gears”
             let angle = (CGFloat.random(in: 0...20.0) * .pi) * 0.1
             
             let distance  = CGFloat.random(in: minDistance...maxDistance)
@@ -1047,7 +1019,6 @@ final class PlayViewController: BaseViewController {
             pop.frame = CGRect(x: 0, y: 0, width: w, height: w)
             pop.center = CGPoint(x: center.x + dx * d, y: center.y + dy * d)
             pop.alpha = 0.25
-            //   iv.layer.zPosition = 2
             pop.transform = CGAffineTransformMakeScale(0.25, 0.25)
             boardView.addSubview(pop)
             
@@ -1123,13 +1094,9 @@ final class PlayViewController: BaseViewController {
     }
     
     private func showDragHighlights(from piece: KnightView) {
-        // ask VM for legal targets
         let targets = viewModel.validTargetsForDrag(from: piece.index)
         
-        // empty cells → pulsing highlight view
         targets.bombEmpties.forEach { addEmptyCellHighlight(at: $0) }
-        
-        // same-color merges → pulse the target knight views (not the dragged one)
         targets.merges.forEach { idx in
             if let kv = knightView(at: idx), kv !== piece {
                 startPulse(kv, to: 1.4, duration: 0.25)
@@ -1139,14 +1106,11 @@ final class PlayViewController: BaseViewController {
     }
     
     private func clearDragHighlights() {
-        // remove empty-cell overlays
         highlightOverlays.forEach {
             $0.layer.removeAllAnimations()
             $0.removeFromSuperview()
         }
         highlightOverlays.removeAll()
-        
-        // stop pulsing merge targets
         pulsingMergeTargets.forEach { stopPulse($0) }
         pulsingMergeTargets.removeAll()
     }
@@ -1163,37 +1127,37 @@ final class PlayViewController: BaseViewController {
         brush.alpha = 0.9
         boardView.addSubview(brush)
         view.bringSubviewToFront(brush)
-            
-        self.playSound("sling")
-         
-    UIView.animate(withDuration: 1.35,
-                   delay: 0.0,
-                   animations: {
         
-        self.inkView.transform = CGAffineTransform(translationX: 0, y: 420).scaledBy(x: 1, y: 0.1)
-        brush.transform = CGAffineTransform(translationX: 0, y: 450)
-        for r in 0..<r1 {
-            for c in 0..<c1 {
-                let id = self.state.board[r][c]
-                guard id == 0 else { continue }
-                if let v = self.pieceViews[r][c] {
-                    removed += 1
-                    v.alpha = 0.0
-                    self.playSound("clear")
-                    v.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
-                    self.playStarBurst(at: v.center , count: 5, imageName: "bonus")
-          
+        self.playSound("sling")
+        
+        UIView.animate(withDuration: 1.35,
+                       delay: 0.0,
+                       animations: {
+            
+            self.inkView.transform = CGAffineTransform(translationX: 0, y: 420).scaledBy(x: 1, y: 0.1)
+            brush.transform = CGAffineTransform(translationX: 0, y: 450)
+            for r in 0..<r1 {
+                for c in 0..<c1 {
+                    let id = self.state.board[r][c]
+                    guard id == 0 else { continue }
+                    if let v = self.pieceViews[r][c] {
+                        removed += 1
+                        v.alpha = 0.0
+                        self.playSound("clear")
+                        v.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
+                        self.playStarBurst(at: v.center , count: 5, imageName: "bonus")
+                        
+                    }
                 }
             }
-        }
-    }, completion: { _ in
-        brush.removeFromSuperview()
-        self.inkView.removeFromSuperview()
-        self.inkView.transform  = .identity
-        self.viewModel.showLevelView()
-        self.playSound(removed>0 ? "stolen" : "pink")
-    })
-}
+        }, completion: { _ in
+            brush.removeFromSuperview()
+            self.inkView.removeFromSuperview()
+            self.inkView.transform  = .identity
+            self.viewModel.showLevelView()
+            self.playSound(removed>0 ? "stolen" : "pink")
+        })
+    }
     func levelFinished(_ flag: Bool) {
         lockUI()
         _ = dropSlots.map { $0.alpha = 0.0  }
@@ -1221,17 +1185,15 @@ final class PlayViewController: BaseViewController {
     func addScore(_ inc: Int) {
         playSound("score")
         
-        // Setup number tween
         scoreAnimFrom = displayedScore
         scoreAnimTo   = displayedScore + inc
-        displayedScore = scoreAnimTo   // commit the target
+        displayedScore = scoreAnimTo
         
         scoreAnimStartTime = CACurrentMediaTime()
         scoreDisplayLink?.invalidate()
         scoreDisplayLink = CADisplayLink(target: self, selector: #selector(tickScoreAnim))
         scoreDisplayLink?.add(to: .main, forMode: .common)
         
-        // Pop-up “+inc” near the score label
         showScorePop("+\(inc)")
     }
     
@@ -1247,7 +1209,6 @@ final class PlayViewController: BaseViewController {
             scoreDisplayLink = nil
             return
         }
-        // easeOutCubic
         let p = CGFloat(t)
         let eased = 1 - pow(1 - p, 3)
         let val = Int(round(CGFloat(scoreAnimFrom) + (CGFloat(scoreAnimTo - scoreAnimFrom) * eased)))
@@ -1255,24 +1216,20 @@ final class PlayViewController: BaseViewController {
     }
     
     private func showScorePop(_ text: String) {
-        // Position a small label above the scoreLabel, animate up & fade
         let pop = UILabel()
         pop.text = text
         pop.font = AppFont.font(21, weight: .bold)
         pop.textColor = UIColor.red
         pop.alpha = 0.0
         
-        // Place it in the same coordinate space as scoreLabel
         pop.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(pop)
         
-        // Anchor pop's center to scoreLabel's center (convert to view)
         let centerX = pop.centerXAnchor.constraint(equalTo: scoreLabel.centerXAnchor)
         let centerY = pop.centerYAnchor.constraint(equalTo: scoreLabel.centerYAnchor, constant: -4)
         NSLayoutConstraint.activate([centerX, centerY])
         
         view.layoutIfNeeded()
-        // start slightly below and small
         pop.transform = CGAffineTransform(translationX: 0, y: 8).scaledBy(x: 0.9, y: 0.9)
         
         UIView.animate(withDuration: 0.18, animations: {
@@ -1293,7 +1250,6 @@ final class PlayViewController: BaseViewController {
     }
     
     
-    // MARK: - Helpers
     private func frameForCell(_ r: Int, _ c: Int) -> CGRect {
         let pad: CGFloat = 0.9
         let s = cellSize > 0 ? cellSize : (boardView.bounds.width / CGFloat(NUMROW))
@@ -1371,7 +1327,6 @@ final class PlayViewController: BaseViewController {
         let h = view.frame.height
         
         let brush = UIImageView(image: UIImage(named: "brush"))
-        //     brush.contentMode = .scaleAspectFill
         brush.bounds.size = CGSize(width: view.frame.width, height: view.frame.width + 110)
         brush.center = CGPoint(x: view.frame.midX, y: view.frame.midY - h)
         brush.alpha = 0.9
@@ -1421,7 +1376,7 @@ final class PlayViewController: BaseViewController {
         let hasBomb = bombs > 0
         let img = UIImage(named: hasBomb ? "bomb" : "nobomb")?.withRenderingMode(.alwaysOriginal)
         bombButton.setImage(img, for: .normal)
-        bombLabel.text = bombs>2 ? "★\(bombs)" : bombs>1 ? "★★" : bombs>0 ? "★" : ""  //⭐
+        bombLabel.text = bombs>2 ? "★\(bombs)" : bombs>1 ? "★★" : bombs>0 ? "★" : ""
         bombButton.accessibilityValue = hasBomb ? "Available" : "Unavailable"
     }
     
@@ -1438,7 +1393,6 @@ final class PlayViewController: BaseViewController {
         let alert = UIAlertController(title: "No Bombs 🚀", message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         
-        // gentle notice haptic
         UINotificationFeedbackGenerator().notificationOccurred(.warning)
         
         present(alert, animated: true)
@@ -1457,12 +1411,11 @@ final class PlayViewController: BaseViewController {
         let alert = UIAlertController(title: "Free ♞ Jump", message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         
-        // gentle notice haptic
         UINotificationFeedbackGenerator().notificationOccurred(.warning)
         
         present(alert, animated: true)
     }
-  
+    
     
     
 }

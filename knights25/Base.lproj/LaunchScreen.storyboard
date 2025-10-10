@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -19,7 +19,7 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg_13" translatesAutoresizingMaskIntoConstraints="NO" id="9XS-He-aQb">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="board" translatesAutoresizingMaskIntoConstraints="NO" id="C5G-Ca-euj">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bg_19" translatesAutoresizingMaskIntoConstraints="NO" id="C5G-Ca-euj">
                                 <rect key="frame" x="9.6666666666666572" y="239.33333333333334" width="373.66666666666674" height="373.33333333333326"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="C5G-Ca-euj" secondAttribute="height" multiplier="1:1" id="qBa-Qb-EgE"/>
@@ -28,27 +28,19 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="N6w-9s-0K8">
                                 <rect key="frame" x="103" y="332.66666666666669" width="187" height="186.66666666666669"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" secondItem="N6w-9s-0K8" secondAttribute="height" multiplier="1:1" id="6Xi-SA-wd1"/>
                                     <constraint firstAttribute="width" secondItem="N6w-9s-0K8" secondAttribute="height" multiplier="1:1" id="k7U-lj-bQr"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lhK-B5-zPc">
-                                <rect key="frame" x="184.66666666666666" y="479.33333333333331" width="24" height="19"/>
-                                <fontDescription key="fontDescription" name="Chalkduster" family="Chalkduster" pointSize="15"/>
-                                <color key="textColor" systemColor="systemYellowColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="9XS-He-aQb" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="0Jc-67-PJW"/>
-                            <constraint firstItem="N6w-9s-0K8" firstAttribute="width" secondItem="N6w-9s-0K8" secondAttribute="height" multiplier="1:1" id="6Xi-SA-wd1"/>
                             <constraint firstItem="N6w-9s-0K8" firstAttribute="width" secondItem="C5G-Ca-euj" secondAttribute="width" multiplier="0.5" id="8dg-p8-rDO"/>
                             <constraint firstItem="N6w-9s-0K8" firstAttribute="centerY" secondItem="C5G-Ca-euj" secondAttribute="centerY" id="CrP-MI-cZA"/>
                             <constraint firstItem="9XS-He-aQb" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="DFT-HA-iV8"/>
                             <constraint firstItem="N6w-9s-0K8" firstAttribute="centerX" secondItem="C5G-Ca-euj" secondAttribute="centerX" id="GKv-H2-C9G"/>
-                            <constraint firstItem="lhK-B5-zPc" firstAttribute="top" secondItem="N6w-9s-0K8" secondAttribute="bottom" constant="-40" id="Gm5-a9-hFG"/>
-                            <constraint firstItem="lhK-B5-zPc" firstAttribute="centerX" secondItem="N6w-9s-0K8" secondAttribute="centerX" id="QgD-ih-Fyx"/>
                             <constraint firstItem="C5G-Ca-euj" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Sw3-0l-4zp"/>
                             <constraint firstItem="9XS-He-aQb" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="WeE-X5-zSk"/>
                             <constraint firstAttribute="bottom" secondItem="9XS-He-aQb" secondAttribute="bottom" id="h9R-d5-6uk"/>
@@ -64,13 +56,10 @@
     </scenes>
     <resources>
         <image name="bg_13" width="400" height="600"/>
-        <image name="board" width="900" height="900"/>
+        <image name="bg_19" width="900" height="900"/>
         <image name="logo" width="256" height="256"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemYellowColor">
-            <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

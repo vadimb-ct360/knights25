@@ -25,20 +25,20 @@ final class DefaultUserService: UserService {
             .init(name: "userid", value: uid),
             .init(name: "platform",  value: "iPhone"),
         ]
-       guard let url = comps.url else {
+        guard let url = comps.url else {
             return completion(.failure(NSError(domain:"UserService", code:-1,
-                    userInfo:[NSLocalizedDescriptionKey:"Bad URL"])))
+                                               userInfo:[NSLocalizedDescriptionKey:"Bad URL"])))
         }
-
+        
         var req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 15)
         req.setValue("application/json", forHTTPHeaderField: "Accept")
-
+        
         URLSession.shared.dataTask(with: req) { data, resp, err in
             if let err = err { return completion(.failure(err)) }
             guard let http = resp as? HTTPURLResponse, (200...299).contains(http.statusCode),
                   let data = data, !data.isEmpty else {
                 return completion(.failure(NSError(domain:"UserService", code:-2,
-                        userInfo:[NSLocalizedDescriptionKey:"Bad HTTP/empty body"])))
+                                                   userInfo:[NSLocalizedDescriptionKey:"Bad HTTP/empty body"])))
             }
             do {
                 let dto = try JSONDecoder().decode(UserBootstrap.self, from: data)

@@ -10,21 +10,21 @@ import Foundation
 enum ScoreLogic {
     static func getRate(for score: Int, _ bonus: Int, _ level: Int) -> [Int] {
         var rate = 1
-        let sMax = 30000
+        let sMax = 35000
         let bMax = 300
-        let lMax = 30
+        let lMax = 35
       
         if score >= sMax/5 { rate += 1 }
         if score >= sMax/2 { rate += 1 }
         if score >= sMax { rate += 1 }
 
+        if bonus >= bMax-100 { rate += 1 }
         if bonus >= bMax-50 { rate += 1 }
-        if bonus >= bMax-25 { rate += 1 }
         if bonus >= bMax { rate += 1 }
 
         if level >= lMax-20 { rate += 1 }
         if level >= lMax-10 { rate += 1 }
-        if level >= 30 { rate += 1 }
+        if level >= lMax { rate += 1 }
 
         return [rate, sMax, bMax, lMax]
         }
@@ -41,7 +41,6 @@ enum ScoreLogic {
 
 
 protocol ScoreService {
-    /// Returns bestLevelScore for NEXT level (N+1) if provided by server
     func saveScore(userId: String?, score: Int, level: Int, rate: Int,
                    completion: @escaping (Result<SaveScoreResponse, Error>) -> Void)
   
@@ -61,7 +60,7 @@ final class DefaultScoreService: ScoreService {
     func saveScore(userId: String?, score: Int, level: Int, rate: Int,
                    completion: @escaping (Result<SaveScoreResponse, Error>) -> Void) {
         var comps = URLComponents()
-        comps.scheme = "https"                   // use "http" only if your server isn’t TLS
+        comps.scheme = "https"
         comps.host   = "bashurov.net"
         comps.path   = "/knights25/api/save_score.php"
         comps.queryItems = [

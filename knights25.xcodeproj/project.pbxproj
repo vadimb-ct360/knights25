@@ -166,7 +166,7 @@
 				DEVELOPMENT_TEAM = 252T2JZ6MY;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = knights25/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Last Black Knight";
+				INFOPLIST_KEY_CFBundleDisplayName = "All Knights";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -177,7 +177,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.bashurov.lastblackknight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -202,7 +202,7 @@
 				DEVELOPMENT_TEAM = 252T2JZ6MY;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = knights25/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Last Black Knight";
+				INFOPLIST_KEY_CFBundleDisplayName = "All Knights";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -213,7 +213,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = net.bashurov.lastblackknight;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

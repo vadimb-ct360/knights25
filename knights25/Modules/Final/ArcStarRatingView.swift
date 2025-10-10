@@ -8,19 +8,14 @@
 import UIKit
 
 final class ArcStarRatingView: UIView {
-    
-    // MARK: Public API
     var rate: Int = 0 { didSet { rate = max(0, min(rate, maxRate)); refresh() } }
     var maxRate: Int = 10 { didSet { maxRate = max(1, maxRate); refresh() } }
     var starSize: CGSize = CGSize(width: 49, height: 49) { didSet { refresh() } }
     var arcDegrees: CGFloat = 160 { didSet { refresh() } }
     
-    // MARK: Images
     var filledImage: UIImage? = UIImage(named: "star_star")
     var emptyImage: UIImage?  = UIImage(named: "fade_star")
-    
-    // MARK: Internals
-    private var starViews: [UIImageView] = []
+    var starViews: [UIImageView] = []
     
     
     // MARK: Life cycle
@@ -51,7 +46,6 @@ final class ArcStarRatingView: UIView {
     
     // MARK: Private
     private func refresh() {
-        // Ensure we have `maxRate` image views
         if starViews.count != maxRate {
             starViews.forEach { $0.removeFromSuperview() }
             starViews = (0..<maxRate).map { _ in
@@ -71,26 +65,21 @@ final class ArcStarRatingView: UIView {
     
     private func layoutStars() {
         guard maxRate > 0, !starViews.isEmpty else { return }
-
-        // Device width and chord
         let deviceWidth = UIScreen.main.bounds.width
         let chord: CGFloat = deviceWidth * 0.85
 
         // Arc parameters
         let theta = arcDegrees * .pi / 180
         let radius = chord/2
-
         let circleCenter = CGPoint(x: bounds.midX, y: 0)
 
-   
-        // ---- Position stars along the arc ----
         let start = -theta / 2
         let step = (maxRate == 1) ? 0 : (theta / CGFloat(maxRate - 1))
 
         for i in 0..<maxRate {
             let angle = start + CGFloat(i) * step
             let x = circleCenter.x + 0.9 * radius * sin(angle)
-            let y = circleCenter.y + 0.9 * radius * (1 - cos(angle)) // arc below center
+            let y = circleCenter.y + 0.9 * radius * (1 - cos(angle))
             let iv = starViews[i]
             iv.center = CGPoint(x: x, y: y)
             iv.bounds.size = starSize

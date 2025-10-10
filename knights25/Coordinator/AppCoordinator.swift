@@ -75,7 +75,7 @@ final class AppCoordinator {
             let finalVM = FinalViewModel(summary: summary, userId: userId)
             let finalVC = FinalViewController(viewModel: finalVM )
             finalVC.onBest = { [weak self] userId in
-                self?.showBest(userId: userId)  // your existing BestView (WebView) push
+                self?.showBest(userId: userId)
             }
             
             nav?.pushViewController(finalVC, animated: true)

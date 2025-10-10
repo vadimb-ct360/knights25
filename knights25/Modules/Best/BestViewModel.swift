@@ -9,14 +9,12 @@ import Foundation
 
 final class BestViewModel {
     let userId: String?
-
+    
     init(userId: String?) { self.userId = userId }
-
-    // Builds: https://bashurov.net/knights25/api/best.php?uid=<userId>
-    // (If your endpoint is http://, see Info.plist note below)
+    
     var url: URL? {
         var comp = URLComponents()
-        comp.scheme = "https"            // change to "http" if needed
+        comp.scheme = "https"
         comp.host   = "bashurov.net"
         comp.path   = "/knights25/api/best.php"
         comp.queryItems = [ URLQueryItem(name: "uid", value: userId) ]

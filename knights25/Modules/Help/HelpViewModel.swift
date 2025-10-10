@@ -6,16 +6,15 @@
 //
 
 final class HelpViewModel {
-    let text : [String] = [
-        "How to play Knights game",
-        "Move knights in L-shape jumping over other knights",
-        "Clear all knights of single color to get brush bomb",
-        "Keep 30 levels of difficulty and reach last knight mode",
-        "Use free jump in safety levels",
-        "Try to get 10000 points and 100 bonuses",
-        "Keep out upper rows in Diablo levels",
-        "",
-        "",
-     ]
-    
+    let helpText: [String] = [
+        "Move knights in an L-shape, jumping over knights of the same color.",
+        "Bombs let you jump to empty cells or turn all knights one color",
+        "Clear all knights of one color to earn Bombs or pass the level.",
+        "Progress through 30 difficulty levels and reach Last Knight mode.",
+        "In KEEPER (safe) levels, finish by landing your last jump on an empty cell.",
+        "Score 30,000 points and 300 bonuses to earn 1 Knight Coin.",
+        "Beware Diablo levels marked as the Red Zone.",
+        "Prepare empty cells for the next Dropped Knight to trigger a MEGA Bonus."
+    ]
+
 }

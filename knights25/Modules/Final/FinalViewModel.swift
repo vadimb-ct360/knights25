@@ -20,14 +20,14 @@ final class FinalViewModel {
     let userId: String?
     private let scoreService: ScoreService
     var onScoreSaved: (() -> Void)?
- 
+    
     let rate: Int
     var sMax: Int = 15000
     var bMax: Int = 150
     var lMax: Int = 30
     var title: String = "Donald Trump"
- 
- 
+    
+    
     init(summary: FinalSummary,
          userId: String?,
          scoreService: ScoreService = DefaultScoreService()
@@ -41,23 +41,23 @@ final class FinalViewModel {
         self.bMax = logic[2]
         self.lMax = logic[3]
         self.title = ScoreLogic.getName(rate: logic[0])
- }
+    }
     
     
     func saveScore(completion: @escaping (Bool) -> Void) {
         
         print("save final score")
         scoreService.saveScore(userId: userId, score: summary.totalScore, level: 0, rate: rate) { [weak self] result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success:
-                        self?.onScoreSaved?()
-                        completion(true)
-                    case .failure:
-                        completion(false)
-                    }
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self?.onScoreSaved?()
+                    completion(true)
+                case .failure:
+                    completion(false)
                 }
             }
         }
-
+    }
+    
 }

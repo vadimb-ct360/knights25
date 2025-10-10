@@ -18,13 +18,11 @@ final class PaddedLabel: UILabel {
     }
 }
 
-
-// MARK: - KnightView (carries its index & color)
 final class KnightView: UIImageView {
     var index: (r:Int,c:Int)
     let colorId: Int
     var startCenter: CGPoint = .zero
-
+    
     init(colorId: Int, index: (Int,Int)) {
         self.colorId = colorId
         self.index = index

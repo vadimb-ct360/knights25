@@ -24,7 +24,7 @@ protocol GameService {
     func isLevelFinished(_ state: GameState) -> Bool
     func isGameOver(_ state: GameState) -> Bool
     func advanceToLevel(_ nextLevelNum: Int, state: inout GameState)
-    func isSuperBonus(in state: GameState) -> Int 
+    func isSuperBonus(in state: GameState) -> Int
     
     func bombTapped(to state: inout GameState)
     
@@ -35,18 +35,17 @@ protocol GameService {
     @discardableResult
     func spawnOneDrop(from index: Int, to state: inout GameState) -> (Int, Int)
     
- 
+    
     func shiftDrops(to state: inout GameState)
     func clear13(for state: inout GameState) -> Int
- 
+    
     func isValidMove(in state: GameState, from: (Int,Int), to: (Int,Int)) -> Int
     func validTargets(from: (Int,Int), in state: GameState) -> (merges: [(Int,Int)], bombEmpties: [(Int,Int)])
     func checkEnd(in state: GameState) -> Bool
 }
 
 
-// MARK: - Default Implementation
-final class DefaultGameService: GameService {
+final class Game: GameService {
     private let size = 5
     
     
@@ -58,14 +57,9 @@ final class DefaultGameService: GameService {
     
     
     
-    
-    // Services/DefaultGameService.swift
     @discardableResult
     func applyMergeBonus(for color: Int, to state: inout GameState) -> Int
     {
-        
-        
-        // Count only the specified color and remember its last position
         var count = 0
         var delta = 0
         var lastPos: (Int,Int)?
@@ -79,9 +73,7 @@ final class DefaultGameService: GameService {
         
         guard count == 1, let p = lastPos else { return 0 }
         
-        // Remove the last knight of that color
         state.board[p.0][p.1] = 0
-        // Reward: +1 bomb
         state.bomb += 1
         state.bonus += 1
         state.score += state.bonus
@@ -258,7 +250,7 @@ final class DefaultGameService: GameService {
                 state.board[r1][c1] = b2
                 state.board[r2][c2] = b1
             }
-         
+            
         }
         
         
@@ -291,7 +283,7 @@ final class DefaultGameService: GameService {
             
             ret += state.numLastColor
             
-              
+            
             return ret
         } else if dest == 0 && state.bomb > 0 {
             state.score += state.numLastColor
@@ -333,11 +325,11 @@ final class DefaultGameService: GameService {
         if nc==0 {
             state.bonus += state.level.diablo
         }
-         
+        
         return nc
         
     }
- 
+    
     @discardableResult
     func spawnOneDrop(from index: Int, to state: inout GameState) -> (Int, Int) {
         var empties: [(Int, Int)] = []
@@ -348,21 +340,17 @@ final class DefaultGameService: GameService {
         }
         let target = empties.randomElement() ?? (0,0)
         let color = state.level.drops[index]
-        //      let rand = Int.random(in: 1...state.level.numColors)
-        //      state.level.drops.append(rand)
         state.board[target.0][target.1] = color
         return target
     }
     
-     func  shiftDrops(to state: inout GameState)  {
+    func  shiftDrops(to state: inout GameState)  {
         state.level.drops.removeFirst()
         let rand = Int.random(in: 1...state.level.numColors)
         state.level.drops.append(rand)
-     //   return color
     }
     
     
-    // Helpers
     private func isKnightMove(from a: (Int, Int), to b: (Int, Int)) -> Bool {
         let dr = abs(a.0 - b.0), dc = abs(a.1 - b.1)
         return (dr == 1 && dc == 2) || (dr == 2 && dc == 1)

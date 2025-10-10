@@ -5,16 +5,12 @@
 //  Created by Vadim on 18. 9. 2025..
 //
 
-// Modules/Final/FinalViewController.swift
 import UIKit
-import AVFoundation
 
 final class FinalViewController: BaseViewController {
-    private var queuePlayer: AVQueuePlayer?
-    private var looper: AVPlayerLooper?
     private let vm: FinalViewModel
-    var onBest: ((String?) -> Void)?     // passes userId to coordinator
-  
+    var onBest: ((String?) -> Void)?
+    
     private let titleLabel = UILabel()
     
     private let scoreLabelL = UILabel()
@@ -25,25 +21,23 @@ final class FinalViewController: BaseViewController {
     private let levelLabelR = UILabel()
     private let bonusLabelR = UILabel()
     
-
+    
     private let statusLabel = UILabel()
     private let nameLabel = PaddedLabel()
-
+    
     private let continueBtn = UIButton(type: .system)
     private let imageView  = UIImageView()
     private let bg = UIImageView()
     private let coin = UIImageView(image: UIImage(named: "coin"))
     private let arc = ArcStarRatingView()
-
+    
     init(viewModel: FinalViewModel) { self.vm = viewModel; super.init(nibName: nil, bundle: nil) }
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if isSoundOn {
-             startGaplessLoop()
-        }
-  
+        loopName = "level2"
+        
         loadBG()
         loadUI()
         loadRate()
@@ -52,15 +46,6 @@ final class FinalViewController: BaseViewController {
     }
     
     
-    override func soundSettingDidChange(isOn: Bool) {
-         // start/stop music or mute SFX for this screen
-        if isOn {
-            startGaplessLoop()
-        } else {
-            stopGapless()
-        }
-    }
-
     
     func updateRadiuses() {
         nameLabel.layoutIfNeeded()
@@ -68,8 +53,6 @@ final class FinalViewController: BaseViewController {
     }
     
     func loadUI() {
-        
-        // Labels (Apple system fonts only)
         titleLabel.text = "Thanks for playing!"
         titleLabel.font = AppFont.font(25, weight: .semibold)
         titleLabel.textAlignment = .center
@@ -81,24 +64,24 @@ final class FinalViewController: BaseViewController {
         scoreLabelL.textAlignment = .right
         scoreLabelR.font = AppFont.font(23, weight: .semibold)
         scoreLabelR.textAlignment = .left
-    
+        
         
         
         levelLabelL.textColor = vm.summary.totalScore >= vm.sMax ? .red : .secondaryLabel
-         levelLabelL.text = "Levels cleared :"
+        levelLabelL.text = "Levels cleared :"
         levelLabelL.font = AppFont.font(21, weight: .semibold)
         levelLabelL.textAlignment = .right
         levelLabelL.textColor = vm.summary.levelsCleared >= vm.lMax ? .red : .secondaryLabel
- 
+        
         levelLabelR.textColor = vm.summary.totalScore >= vm.sMax ? .red : .secondaryLabel
         
         let m2 = String(format: "%02d", vm.summary.levelsCleared)
-  
+        
         levelLabelR.text = "\(m2)/\(vm.lMax)"
         levelLabelR.font = AppFont.font(21, weight: .semibold)
         levelLabelR.textAlignment = .left
         levelLabelR.textColor = vm.summary.levelsCleared >= vm.lMax ? .red : .secondaryLabel
- 
+        
         
         
         bonusLabelL.text = "Bonuses :"
@@ -107,13 +90,13 @@ final class FinalViewController: BaseViewController {
         bonusLabelL.textColor = vm.summary.bonus >= vm.bMax ? .red : .secondaryLabel
         
         let m3 = String(format: "%03d", vm.summary.bonus)
-
+        
         bonusLabelR.text = "\(m3)/\(vm.bMax)"
         
         bonusLabelR.font = AppFont.font(21, weight: .semibold)
         bonusLabelR.textAlignment = .center
         bonusLabelR.textColor = vm.summary.bonus >= vm.bMax ? .red : .secondaryLabel
-      
+        
         
         let raw = UIImage(named: "button_2")!
         let bg  = raw.resizableImage(withCapInsets: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2),
@@ -141,7 +124,7 @@ final class FinalViewController: BaseViewController {
         ])
         
         imageView.contentMode = .scaleAspectFit
-         
+        
         statusLabel.text = "Saving score…"
         statusLabel.font = AppFont.font(17, weight: .regular)
         statusLabel.textColor = .tertiaryLabel
@@ -152,12 +135,12 @@ final class FinalViewController: BaseViewController {
         nameLabel.numberOfLines = 0
         nameLabel.font = AppFont.font(23, weight: .semibold)
         nameLabel.layer.masksToBounds = true
-
+        
         nameLabel.backgroundColor = .white.withAlphaComponent(0.7)
         nameLabel.layer.cornerRadius = 23
         nameLabel.textAlignment = .center
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-      
+        
         
         [titleLabel, coin, scoreLabelL, levelLabelL, bonusLabelL, scoreLabelR, levelLabelR, bonusLabelR, imageView, nameLabel, continueBtn, statusLabel ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -172,10 +155,10 @@ final class FinalViewController: BaseViewController {
             
             scoreLabelL.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             scoreLabelL.trailingAnchor.constraint(equalTo: g.centerXAnchor),
-         
+            
             scoreLabelR.centerYAnchor.constraint(equalTo: scoreLabelL.centerYAnchor),
             scoreLabelR.leadingAnchor.constraint(equalTo: g.centerXAnchor, constant: 10),
- 
+            
             
             
             
@@ -188,20 +171,20 @@ final class FinalViewController: BaseViewController {
             levelLabelL.topAnchor.constraint(equalTo: scoreLabelL.bottomAnchor, constant: 8),
             levelLabelL.leadingAnchor.constraint(lessThanOrEqualTo: scoreLabelL.leadingAnchor),
             levelLabelL.trailingAnchor.constraint(equalTo: scoreLabelL.trailingAnchor),
-     
+            
             levelLabelR.centerYAnchor.constraint(equalTo: levelLabelL.centerYAnchor),
             levelLabelR.leadingAnchor.constraint(equalTo: g.centerXAnchor, constant: 10),
- 
+            
             
             
             bonusLabelL.topAnchor.constraint(equalTo: levelLabelL.bottomAnchor, constant: 8),
             bonusLabelL.trailingAnchor.constraint(equalTo: scoreLabelL.trailingAnchor),
-        
+            
             bonusLabelR.centerYAnchor.constraint(equalTo: bonusLabelL.centerYAnchor),
             bonusLabelR.leadingAnchor.constraint(equalTo: g.centerXAnchor, constant: 10),
- 
+            
             imageView.topAnchor.constraint(equalTo: bonusLabelL.bottomAnchor, constant: 66 ),
-         imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
+            imageView.centerXAnchor.constraint(equalTo: g.centerXAnchor),
             imageView.widthAnchor.constraint(equalTo: g.widthAnchor, multiplier: 0.6),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
             
@@ -209,7 +192,7 @@ final class FinalViewController: BaseViewController {
             nameLabel.leadingAnchor.constraint(greaterThanOrEqualTo: g.leadingAnchor, constant: 80),
             nameLabel.trailingAnchor.constraint(greaterThanOrEqualTo: g.trailingAnchor, constant: 80),
             nameLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-        
+            
             
             continueBtn.bottomAnchor.constraint(equalTo: g.bottomAnchor, constant: -66),
             continueBtn.centerXAnchor.constraint(equalTo: g.centerXAnchor),
@@ -218,15 +201,15 @@ final class FinalViewController: BaseViewController {
             
             statusLabel.topAnchor.constraint(equalTo: continueBtn.bottomAnchor, constant: 8),
             statusLabel.centerXAnchor.constraint(equalTo: g.centerXAnchor),
-         
+            
         ])
     }
     
     func loadRate() {
         
         arc.translatesAutoresizingMaskIntoConstraints = false
-        arc.configure(rate: 2, maxRate: 10, starSize: CGSize(width: 49, height: 49))
-     
+        arc.configure(rate: 2, maxRate: 10, starSize: CGSize(width: 45, height: 45))
+        
         
         view.addSubview(arc)
         
@@ -235,8 +218,8 @@ final class FinalViewController: BaseViewController {
             arc.topAnchor.constraint(equalTo: bonusLabelL.bottomAnchor, constant: 30 ),
             arc.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
             arc.heightAnchor.constraint(equalTo: arc.widthAnchor),
-        
-   ])
+            
+        ])
     }
     
     private func loadBG() {
@@ -267,8 +250,7 @@ final class FinalViewController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        stopGapless()
-      navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
     }
     
     
@@ -280,66 +262,43 @@ final class FinalViewController: BaseViewController {
                 self.setRating(n)
                 self.statusLabel.text = "Score saved to www.bashurov.net"
                 self.imageView.image = UIImage(named: "rate_\(n)")
-         
+                
             }
         }
     }
     
     func setRating(_ r: Int) {
         arc.rate = r
-        // tiny bounce on the last changed star
-        let idx = max(0, min(r - 1, arc.maxRate - 1))
-        let star = arc.subviews.compactMap { $0 as? UIImageView }[idx]
         let spring = UISpringTimingParameters(dampingRatio: 0.55, initialVelocity: .zero)
         let animator = UIViewPropertyAnimator(duration: 0.75, timingParameters: spring)
-        animator.addAnimations { star.transform = CGAffineTransform(scaleX: 1.15, y: 1.15) }
-        animator.addCompletion { _ in UIView.animate(withDuration: 0.32) { star.transform = .identity } }
+        animator.addAnimations {
+            for i in 0..<r {
+                self.arc.starViews[i].transform = CGAffineTransform(scaleX: 1.15, y: 1.15)
+            }
+        }
+        animator.addCompletion { _ in UIView.animate(withDuration: 0.32) {
+            for star in self.arc.starViews {
+                star.transform = .identity
+            }
+            
+        }
+        }
         animator.startAnimation()
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         vm.saveScore { [weak self] ok in
             guard let self = self else { return }
             self.statusLabel.text = "Score saved to www.bashurov.net"
-       
+            
         }
     }
-
+    
     
     
     @objc private func continueTapped() {
         onBest?(vm.userId)
     }
     
-    
-    
-    private func startGaplessLoop() {
-        guard isSoundOn else {
-            return
-        }
-        let url = Bundle.main.url(forResource: "level2", withExtension: "caf", subdirectory: "Resources/Sound")
-            ?? Bundle.main.url(forResource: "level2", withExtension: "caf")
-        guard let url else { print("level2.caf not found"); return }
-
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [.mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch { print(error) }
-
-        let item = AVPlayerItem(url: url)
-        let player = AVQueuePlayer()
-        self.queuePlayer = player
-        self.looper = AVPlayerLooper(player: player, templateItem: item) // infinite
-        player.play()
-    }
-
-    private func stopGapless() {
-        looper?.disableLooping()
-        queuePlayer?.pause()
-        queuePlayer = nil
-        looper = nil
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-    }
-
 }

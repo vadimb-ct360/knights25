@@ -14,9 +14,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let winScene = scene as? UIWindowScene else { return }
         let window = UIWindow(windowScene: winScene)
         
-        // Inject your real services
-        let gameService = DefaultGameService()
-        
+        let gameService = Game()
         coordinator = AppCoordinator(window: window,
                                      gameService: gameService)
         

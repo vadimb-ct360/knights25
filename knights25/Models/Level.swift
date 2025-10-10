@@ -39,7 +39,7 @@ struct Level: Equatable, Codable {
             "Emma","M-mccay","Mario","Diablo-3","Boo Keep",
             "Diablo-3","Phil","Diego","Diablo-4","Last Keeper",
             "GarryK","Fisher","Magnus","Stepan", "Bilbo End",
-             
+            
         ]
         
         
@@ -72,7 +72,7 @@ struct Level: Equatable, Codable {
         ]
         
         let moveQuota: Int = n<moves.count ? moves[n] : 10
-      //     let moveQuota: Int = 3
+        //     let moveQuota: Int = 3
         var drops = (0..<10).map { _ in Int.random(in: 1...numColors) }
         
         if num > 1 && num < 9 {
@@ -95,8 +95,5 @@ struct Level: Equatable, Codable {
         self.ground = n<gNum.count ? "bg_\(gNum[n])" : "bg_0"
         self.icon = n<iNum.count ? "level_\(iNum[n])" : "level_0"
         self.levelName = n<names.count ? names[n] : "Buba Diop"
-    
-        
-    }
-    
+     }
 }

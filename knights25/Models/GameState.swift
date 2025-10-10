@@ -12,9 +12,9 @@ enum Status {
 }
 
 struct GameState {
-    var level: Level                // ← was Int
+    var level: Level
     var board: [[Int]]
-    var moves: Int              // moves made so far
+    var moves: Int
     var score: Int
     var bomb: Int = 0
     var bonus: Int = 1
@@ -23,10 +23,10 @@ struct GameState {
     var remainingMoves: Int { max(0, level.moveQuota - moves) }
     var allowFreeMove: Bool { bomb>0 && (level.isCleaning || remainingMoves > 1) }
     var status: Status = .playing
-
+    
     static func make(level: Level,
                      board: [[Int]]
-                  ) -> GameState {
+    ) -> GameState {
         GameState(level: level,
                   board: board,
                   moves: 0,
