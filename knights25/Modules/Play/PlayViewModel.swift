@@ -109,7 +109,7 @@ final class PlayViewModel {
             
             state.bomb +=  1
             var d = state.level.num + state.bonus
-            state.bonus += state.level.isCleaning ? 0 : 1
+            state.bonus +=  1
             d += gameService.clear13(for: &state)
     
             state.score += d

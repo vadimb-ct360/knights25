@@ -225,7 +225,7 @@ final class FinalViewController: BaseViewController {
     func loadRate() {
         
         arc.translatesAutoresizingMaskIntoConstraints = false
-        arc.configure(rate: 2, maxRate: 10, starSize: CGSize(width: 53, height: 53))
+        arc.configure(rate: 2, maxRate: 10, starSize: CGSize(width: 49, height: 49))
      
         
         view.addSubview(arc)

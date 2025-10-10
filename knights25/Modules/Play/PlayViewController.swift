@@ -83,7 +83,15 @@ final class PlayViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: false) // ensure visible
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        UIView.animate(withDuration: 0.3,
+                       delay: 0,
+                       options: [.curveEaseIn],
+                       animations: {
+            self.boardView.transform = .identity
+        })
+  
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -122,7 +130,7 @@ final class PlayViewController: BaseViewController {
   
     private func setupUI() {
         view.backgroundColor = .systemPink
-        backgroundImageView.image = UIImage(named: "bg_1")
+        backgroundImageView.image = UIImage(named: "bg_13")
         backgroundImageView.contentMode = .scaleAspectFill
         backgroundImageView.isUserInteractionEnabled = false
         backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -135,6 +143,9 @@ final class PlayViewController: BaseViewController {
         ])
          view.addSubview(boardView)
         boardView.translatesAutoresizingMaskIntoConstraints = false
+        
+        boardView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+ 
         NSLayoutConstraint.activate([
             boardView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             boardView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -580,8 +591,11 @@ final class PlayViewController: BaseViewController {
             let w6 = view.frame.width/6
             let h6 = CGFloat(s.level.diablo) * w6
             inkView.frame = CGRect(x: 5, y: 5, width: w6*5-10, height: h6-10)
-            inkView.backgroundColor = .red.withAlphaComponent(0.25)
-            inkView.layer.cornerRadius = 7
+            inkView.backgroundColor = .red.withAlphaComponent(0.35)
+            inkView.layer.cornerRadius = 13
+            inkView.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
+            inkView.layer.borderWidth = 8
+       
         
             boardView.addSubview(inkView)
         }
@@ -1144,20 +1158,20 @@ final class PlayViewController: BaseViewController {
         let s = view.frame.width/6
         var removed = 0
         
-        let brush = UIImageView(image: UIImage(named: "brush"))
-        brush.frame = CGRect(x: 0, y: -s, width: s*5, height: s*7)
+        let brush = UIImageView(image: UIImage(named: "flame"))
+        brush.frame = CGRect(x: 0, y: -3*s, width: s*5, height: s*7)
         brush.alpha = 0.9
         boardView.addSubview(brush)
         view.bringSubviewToFront(brush)
             
         self.playSound("sling")
          
-    UIView.animate(withDuration: 1.25,
+    UIView.animate(withDuration: 1.35,
                    delay: 0.0,
                    animations: {
         
         self.inkView.transform = CGAffineTransform(translationX: 0, y: 420).scaledBy(x: 1, y: 0.1)
-        brush.transform = CGAffineTransform(translationX: 0, y: 500)
+        brush.transform = CGAffineTransform(translationX: 0, y: 450)
         for r in 0..<r1 {
             for c in 0..<c1 {
                 let id = self.state.board[r][c]
@@ -1165,7 +1179,10 @@ final class PlayViewController: BaseViewController {
                 if let v = self.pieceViews[r][c] {
                     removed += 1
                     v.alpha = 0.0
+                    self.playSound("clear")
                     v.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
+                    self.playStarBurst(at: v.center , count: 5, imageName: "bonus")
+          
                 }
             }
         }
@@ -1395,7 +1412,7 @@ final class PlayViewController: BaseViewController {
         if bombs > 0 {
             showBrush()
         } else {
-            playSound("merge")
+            playSound("level")
             showNoBombInfo()
         }
     }

@@ -28,7 +28,7 @@ struct Level: Equatable, Codable {
             3,2,3,4,2,
             3,2,3,2,2,
             3,2,3,2,2,
-            3,2,3,2,3,
+            2,2,2,2,2,
         ]
         let numColors = n<colors.count ? colors[n] :  2
         
@@ -38,8 +38,7 @@ struct Level: Equatable, Codable {
             "Vaterflo","Diablo-2","Nikki","Diablo-2","Labu Keep",
             "Emma","M-mccay","Mario","Diablo-3","Boo Keep",
             "Diablo-3","Phil","Diego","Diablo-4","Last Keeper",
-            "GarryK","Fisher","Magnus","Stepan", "Watubu",
-            "Baggins",
+            "GarryK","Fisher","Magnus","Stepan", "Bilbo End",
              
         ]
         
@@ -50,7 +49,9 @@ struct Level: Equatable, Codable {
             10,20,10,20,15,
             10,10,10,20,15,
             20,10,10,20,10,
-            20,10,10,10,10]
+            20,10,10,10,10,
+            10,10,20,20,20,
+            50,50]
         
         let gNum = [
             13, 0, 2, 0, 3,
@@ -58,18 +59,16 @@ struct Level: Equatable, Codable {
             7, 1, 6, 1,  0,
             5,  8, 12, 1, 0,
             1, 10, 13, 1, 0,
-            17, 16, 15, 4, 0,
-            9,
+            14, 16, 15, 4, 0,
         ]
         
         let iNum = [
             0, 0, 8, 0, 2,
-            6,  22,  4, 1, 0,
+            6,  15,  3, 1, 0,
             17, 1, 13, 1, 0,
             7, 16, 12, 1,  0,
             1, 18, 10, 1, 0,
-            23, 27, 24, 15, 0,
-            9,
+            11, 14, 4, 5, 0,
         ]
         
         let moveQuota: Int = n<moves.count ? moves[n] : 10
@@ -91,10 +90,10 @@ struct Level: Equatable, Codable {
         self.num = num
         self.moveQuota = moveQuota
         self.numColors = numColors
-        self.isCleaning = num==10 || num==15 || num==20 || num==25 || num==30 || num==2 || num==4
+        self.isCleaning = num==10 || num==15 || num==20 || num==25 || num>=30 || num==2 || num==4
         self.drops = drops
-        self.ground = n<gNum.count ? "bg_\(gNum[n])" : "bg_11"
-        self.icon = n<iNum.count ? "level_\(iNum[n])" : "level_9"
+        self.ground = n<gNum.count ? "bg_\(gNum[n])" : "bg_0"
+        self.icon = n<iNum.count ? "level_\(iNum[n])" : "level_0"
         self.levelName = n<names.count ? names[n] : "Buba Diop"
     
         

@@ -12,7 +12,7 @@ final class ArcStarRatingView: UIView {
     // MARK: Public API
     var rate: Int = 0 { didSet { rate = max(0, min(rate, maxRate)); refresh() } }
     var maxRate: Int = 10 { didSet { maxRate = max(1, maxRate); refresh() } }
-    var starSize: CGSize = CGSize(width: 53, height: 53) { didSet { refresh() } }
+    var starSize: CGSize = CGSize(width: 49, height: 49) { didSet { refresh() } }
     var arcDegrees: CGFloat = 160 { didSet { refresh() } }
     
     // MARK: Images
