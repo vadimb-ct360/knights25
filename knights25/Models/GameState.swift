@@ -7,6 +7,7 @@
 
 enum Status {
     case playing
+    case lastKnight 
     case levelCompleted
     case gameOver
 }

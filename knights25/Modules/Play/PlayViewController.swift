@@ -46,7 +46,8 @@ final class PlayViewController: BaseViewController {
     
     private var highlightOverlays: [UIView] = []
     private var pulsingMergeTargets: [KnightView] = []
-    
+    private var highlightTargets: [UIImageView] = []
+ 
     private var tapHighlightsTimer: Timer?
     
     
@@ -169,17 +170,17 @@ final class PlayViewController: BaseViewController {
     private func setupHUD() {
         navigationController?.setNavigationBarHidden(false, animated: false)
         
-        scorePill.backgroundColor = UIColor(cgColor: CGColor(red: 0.8, green: 0.4, blue: 0.2, alpha: 1))
+        scorePill.backgroundColor = UIColor(cgColor: CGColor(red: 0.13, green: 0.36, blue: 0.58, alpha: 1))
         scorePill.layer.cornerRadius = 21
         scorePill.layer.cornerCurve = .continuous
         scorePill.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scorePill)
         
         
-        let cg = CGColor(red: 1, green: 0.8, blue: 0.35, alpha: 1)
+        let cg = CGColor(red: 0.9, green: 0.95, blue: 0.7, alpha: 1)
         dropsPill.backgroundColor = UIColor(cgColor: cg)
         dropsPill.layer.borderWidth = 7
-        dropsPill.layer.borderColor = CGColor(red: 0.9, green: 0.5, blue: 0.2, alpha: 1)
+        dropsPill.layer.borderColor = CGColor(red: 0.12, green: 0.35, blue: 0.52, alpha: 1)
         
         dropsPill.layer.cornerRadius = 23
         dropsPill.layer.cornerCurve = .continuous
@@ -472,6 +473,10 @@ final class PlayViewController: BaseViewController {
                 self.renderMoves(state.remainingMoves)
                 self.updateBombButton(bombs: state.bomb)
                 
+                
+                if state.status == .lastKnight {
+                    self.playLastKnight()
+                }
             }
         }
         viewModel.onDropKnight = { [weak self] target in
@@ -493,6 +498,45 @@ final class PlayViewController: BaseViewController {
     
     
     
+    func playLastKnight() {
+        dropsPill.isHidden = true
+        inkView.isHidden = true
+        lockUI()
+        
+        if let lastKnight = boardView.subviews.compactMap({ $0 as? KnightView }).first {
+            moveLastKnight(lastKnight)
+         }
+    }
+
+    
+    func moveLastKnight(_ k: KnightView) {
+        print("playLastKnight() = [\(k.index.0), \(k.index.1)]")
+        let src = k.index
+        let dst = viewModel.findCellFor(src)
+        
+        let coin = UIImageView(image: UIImage(named: "bubble_0"))
+        boardView.addSubview(coin)
+        coin.frame = frameForCell(dst.0, dst.1)
+        boardView.bringSubviewToFront(k)
+        let cellCenter = frameForCell(dst.0, dst.1).center
+         
+        UIView.animate(withDuration: 0.45,
+                       animations: {
+            k.center = cellCenter
+        }, completion: { _ in
+            let moveResult = self.viewModel.makeMove(Move(from: src, to: dst))
+            let m = min(3, self.state.numLastColor)
+            self.playSound("merge_\(m)")
+            coin.removeFromSuperview()
+            let bubble = BubbleView(text: String(moveResult.0), color: 1)
+            bubble.show(from: cellCenter, in: self.boardView, size: 70, driftY: cellCenter.y + CGFloat.random(in: 90...110.0), duration: CGFloat.random(in:0.5...1.0))
+
+        })
+        
+  
+
+    }
+    
     func renderLastColor(_ lastColor: Int, number: Int) {
         
         
@@ -501,11 +545,14 @@ final class PlayViewController: BaseViewController {
             lastColorKnight.setImage(img, for: .normal)
             lastColorLabel.text =  "\(number)"
             lastColorLabel.isHidden = false
+            dumpControls(lastColorKnight, lastColorLabel, delay: 0.3)
         } else {
             let img = UIImage(named: "help")?.withRenderingMode(.alwaysOriginal)
             lastColorKnight.setImage(img, for: .normal)
             lastColorLabel.isHidden = true
         }
+        
+    
         
     }
     
@@ -533,9 +580,32 @@ final class PlayViewController: BaseViewController {
     }
     
     
+    func dumpControls(_ box: UIView, _ text: UILabel, delay: CGFloat = 0 ) {
+        UIView.animate(withDuration: 0.2, delay: delay,
+                    animations: {
+            box.transform = CGAffineTransform(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -2)
+            text.transform = CGAffineTransform(scaleX: 1.15, y: 1.2).translatedBy(x: 0, y: -3)
+     }, completion: { _ in
+            UIView.animate(withDuration: 0.45+delay/2,
+                           delay: 0,
+                           usingSpringWithDamping: 0.45,
+                           initialSpringVelocity: .zero,
+                           animations: {
+                text.transform = .identity
+                box.transform = .identity
+            })
+        })
+    }
+    
+    
     func renderMoves(_ moves: Int) {
         let m = String(format: ":%02d", moves)
         movesNumberLabel.text = m
+        
+        dumpControls(clock, movesNumberLabel)
+    
+        
+        
         if moves<3 {
             if moves==1 && state.allowFreeMove {
                 self.playPink()
@@ -568,21 +638,24 @@ final class PlayViewController: BaseViewController {
         scoreDisplayLink   = nil
         
         clearDragHighlights()
-        pulsingMergeTargets.removeAll()
+        
         title = "\(s.level.num). \(state.level.levelName)"
         backgroundImageView.image = UIImage(named: s.level.ground)
         
         if s.level.diablo>0 {
             let w6 = view.frame.width/6
             let h6 = CGFloat(s.level.diablo) * w6
-            inkView.frame = CGRect(x: 5, y: 5, width: w6*5-10, height: h6-10)
-            inkView.backgroundColor = .red.withAlphaComponent(0.35)
+            let pad: CGFloat = w6/4 - 2
+            inkView.frame = CGRect(x: pad, y: pad, width: w6*5-pad*2, height: h6-pad*2)
+            inkView.backgroundColor = .green.withAlphaComponent(0.4)
             inkView.layer.cornerRadius = 13
-            inkView.layer.borderColor = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
-            inkView.layer.borderWidth = 8
+            inkView.layer.borderColor = CGColor(red: 0.2, green: 0.5, blue: 0.1, alpha: 0.9)
+            inkView.layer.borderWidth = 7
             
             
             boardView.addSubview(inkView)
+       //     boardView.sendSubviewToBack(inkView)
+    
         }
         
         
@@ -603,8 +676,7 @@ final class PlayViewController: BaseViewController {
         scoreLabel.text = self.scoreString(0)
         lastLevelNum = 0
         viewModel.start(levelNumber: 1)
-        
-    }
+     }
     
     
     
@@ -1061,7 +1133,7 @@ final class PlayViewController: BaseViewController {
         a.autoreverses = true
         a.repeatCount = .infinity
         a.isRemovedOnCompletion = false
-        view.alpha = 0.7
+    //    view.alpha = 0.7
         
         view.layer.add(a, forKey: key)
     }
@@ -1101,6 +1173,14 @@ final class PlayViewController: BaseViewController {
             if let kv = knightView(at: idx), kv !== piece {
                 startPulse(kv, to: 1.4, duration: 0.25)
                 pulsingMergeTargets.append(kv)
+                let b = UIImageView(image: UIImage(named: "bubble"))
+                kv.addSubview(b)
+                let newSize = CGSize(width: kv.bounds.width * 1.42,
+                                     height: kv.bounds.height * 1.42)
+                b.bounds = CGRect(origin: .zero, size: newSize)
+                b.center = CGPoint(x: kv.bounds.midX, y: kv.bounds.midY + 4)
+
+                highlightTargets.append(b)
             }
         }
     }
@@ -1111,68 +1191,84 @@ final class PlayViewController: BaseViewController {
             $0.removeFromSuperview()
         }
         highlightOverlays.removeAll()
+        
+        highlightTargets.forEach {
+            $0.removeFromSuperview()
+        }
+        highlightTargets.removeAll()
+  
         pulsingMergeTargets.forEach { stopPulse($0) }
         pulsingMergeTargets.removeAll()
     }
     
     
-    func remove2rows(_ rows: Int) {
-        let r1 = rows
-        let c1 = NUMROW
+    func removeKnightsFrom(_ rows: Int) {
+        let cols = NUMROW
         let s = view.frame.width/6
-        var removed = 0
+        let removed = state.level.lostKnights
         
-        let brush = UIImageView(image: UIImage(named: "flame"))
-        brush.frame = CGRect(x: 0, y: -3*s, width: s*5, height: s*7)
+        let brush = UIImageView(image: UIImage(named: removed ? "flame" : "flame_pink"))
+        brush.frame = CGRect(x: 0, y: 3*s, width: s*5, height: s*7)
         brush.alpha = 0.9
         boardView.addSubview(brush)
         view.bringSubviewToFront(brush)
         
         self.playSound("sling")
         
-        UIView.animate(withDuration: 1.35,
+        UIView.animate(withDuration: 0.95,
                        delay: 0.0,
                        animations: {
             
-            self.inkView.transform = CGAffineTransform(translationX: 0, y: 420).scaledBy(x: 1, y: 0.1)
-            brush.transform = CGAffineTransform(translationX: 0, y: 450)
-            for r in 0..<r1 {
-                for c in 0..<c1 {
+            self.inkView.transform = CGAffineTransform(translationX: 0, y: -10).scaledBy(x: 1, y: 0.5)
+            brush.transform = CGAffineTransform(translationX: 0, y: -4*s)
+            for r in 0..<rows {
+                for c in 0..<cols {
                     let id = self.state.board[r][c]
                     guard id == 0 else { continue }
                     if let v = self.pieceViews[r][c] {
-                        removed += 1
                         v.alpha = 0.0
                         self.playSound("clear")
                         v.transform = CGAffineTransform(scaleX: 2.0, y: 2.0)
                         self.playStarBurst(at: v.center , count: 5, imageName: "bonus")
-                        
                     }
                 }
             }
         }, completion: { _ in
-            brush.removeFromSuperview()
-            self.inkView.removeFromSuperview()
-            self.inkView.transform  = .identity
-            self.viewModel.showLevelView()
-            self.playSound(removed>0 ? "stolen" : "pink")
-        })
+             self.playSound("clear")
+            UIView.animate(withDuration: 0.95,
+                           delay: 0.0,
+                           animations: {
+                
+                self.inkView.transform = CGAffineTransform(translationX: 0, y: -s).scaledBy(x: 1, y: 0.1)
+                brush.transform = CGAffineTransform(translationX: 0, y: -10*s)
+            }, completion: { _ in
+                brush.removeFromSuperview()
+                self.inkView.removeFromSuperview()
+                self.inkView.transform  = .identity
+                self.playSound(removed ? "stolen" : "pink")
+                self.viewModel.showLevelView()
+           })
+          })
     }
+    
+    
+    
     func levelFinished(_ flag: Bool) {
         lockUI()
         _ = dropSlots.map { $0.alpha = 0.0  }
-        if state.level.diablo>0 {
-            remove2rows(state.level.diablo)
+        let rows = state.status == .lastKnight ? 0 : state.level.diablo
+        if rows>0 {
+            removeKnightsFrom(rows)
         } else {
-            playSound("level")
-            UIView.animate(withDuration: 1.2,
-                           delay: 0.0,
-                           animations: {
-                _ = self.pieceViews.map { $0.map {$0?.alpha = 0.25 } }
-            }, completion: { _ in
-                self.viewModel.showLevelView()
-                self.playSound("final")
-            })
+                playSound("level")
+                UIView.animate(withDuration: 1.2,
+                               delay: 0.0,
+                               animations: {
+                    _ = self.pieceViews.map { $0.map {$0?.alpha = 0.25 } }
+                }, completion: { _ in
+                    self.viewModel.showLevelView()
+                    self.playSound("final")
+                })
         }
     }
     
@@ -1194,8 +1290,7 @@ final class PlayViewController: BaseViewController {
         scoreDisplayLink = CADisplayLink(target: self, selector: #selector(tickScoreAnim))
         scoreDisplayLink?.add(to: .main, forMode: .common)
         
-        showScorePop("+\(inc)")
-    }
+     }
     
     
     
@@ -1214,41 +1309,6 @@ final class PlayViewController: BaseViewController {
         let val = Int(round(CGFloat(scoreAnimFrom) + (CGFloat(scoreAnimTo - scoreAnimFrom) * eased)))
         scoreLabel.text = self.scoreString(val)
     }
-    
-    private func showScorePop(_ text: String) {
-        let pop = UILabel()
-        pop.text = text
-        pop.font = AppFont.font(21, weight: .bold)
-        pop.textColor = UIColor.red
-        pop.alpha = 0.0
-        
-        pop.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(pop)
-        
-        let centerX = pop.centerXAnchor.constraint(equalTo: scoreLabel.centerXAnchor)
-        let centerY = pop.centerYAnchor.constraint(equalTo: scoreLabel.centerYAnchor, constant: -4)
-        NSLayoutConstraint.activate([centerX, centerY])
-        
-        view.layoutIfNeeded()
-        pop.transform = CGAffineTransform(translationX: 0, y: 8).scaledBy(x: 0.9, y: 0.9)
-        
-        UIView.animate(withDuration: 0.18, animations: {
-            pop.alpha = 1.0
-            pop.transform = .identity
-        }) { _ in
-            UIView.animate(withDuration: 0.45,
-                           delay: 0.0,
-                           usingSpringWithDamping: 0.9,
-                           initialSpringVelocity: 0.3,
-                           animations: {
-                pop.transform = CGAffineTransform(translationX: 0, y: -18)
-                pop.alpha = 0.0
-            }, completion: { _ in
-                pop.removeFromSuperview()
-            })
-        }
-    }
-    
     
     private func frameForCell(_ r: Int, _ c: Int) -> CGRect {
         let pad: CGFloat = 0.9
@@ -1399,6 +1459,7 @@ final class PlayViewController: BaseViewController {
     }
     
     private func showLastJumpInfo() {
+        guard case .playing = state.status else { return }
         let msg =
         """
         Yoo-ho!

@@ -132,8 +132,8 @@ class BaseViewController: UIViewController, BannerViewDelegate {
     
     
     private func startGaplessLoop() {
-        guard isSoundOn else { return }
         guard let name = loopName else { return }
+        guard isSoundOn else { return }
         
         let url = Bundle.main.url(forResource: name, withExtension: "caf", subdirectory: "Resources/Sound")
         ?? Bundle.main.url(forResource: name, withExtension: "caf")
@@ -152,6 +152,7 @@ class BaseViewController: UIViewController, BannerViewDelegate {
     }
     
     private func stopGapless() {
+        guard let name = loopName else { return }
         looper?.disableLooping()
         queuePlayer?.pause()
         queuePlayer = nil

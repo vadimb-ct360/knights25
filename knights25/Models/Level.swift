@@ -10,6 +10,7 @@ struct Level: Equatable, Codable {
     let moveQuota: Int
     let numColors: Int
     let isCleaning: Bool
+    var lostKnights: Bool = false
     var bestScore = 102
     var totalBestScore = 0
     var todayBestScore = 0
@@ -22,16 +23,19 @@ struct Level: Equatable, Codable {
     init(for num: Int) {
         let n = num-1
         let colors: [Int] =  [
-            2,3,4,5,2,
-            3,4,2,3,4,
-            2,3,3,4,2,
-            3,2,3,4,2,
-            3,2,3,2,2,
-            3,2,3,2,2,
-            2,2,2,2,2,
+            2, 3, 4, 5, 2,     3, 4, 2, 3, 4,
+            2, 3, 2, 4, 2,     3, 2, 3, 4, 2,
+            3, 2, 3, 2, 2,     3, 2, 3, 2, 2,
+            2, 2, 2, 2, 2,
         ]
+        let moves = [
+            15,20,20,15,67,   25,25,30,25,15,
+            10,20,25,20,15,   15,15,15,20,15,
+            20,15,15,20,10,   20,10,10,10,10,
+            10,10,20,20,20,   25,50,99]
+    
         let numColors = n<colors.count ? colors[n] :  2
-        
+   
         let names = [
             "Beggins", "Labu Keep","Aqua Red","Green Keeper", "Polgar",
             "Leo","Wane","Lenin","Diablo","Didi Keep",
@@ -41,19 +45,7 @@ struct Level: Equatable, Codable {
             "GarryK","Fisher","Magnus","Stepan", "Bilbo End",
             
         ]
-        
-        
-        let moves = [
-            15,20,20,15,67,
-            25,25,30,25,15,
-            10,20,10,20,15,
-            10,10,10,20,15,
-            20,10,10,20,10,
-            20,10,10,10,10,
-            10,10,20,20,20,
-            50,50]
-        
-        let gNum = [
+         let gNum = [
             13, 0, 2, 0, 3,
             10, 15, 11, 1, 0,
             7, 1, 6, 1,  0,
@@ -72,7 +64,8 @@ struct Level: Equatable, Codable {
         ]
         
         let moveQuota: Int = n<moves.count ? moves[n] : 10
-        //     let moveQuota: Int = 3
+    // MARK: debug level design
+     //       let moveQuota: Int = 3
         var drops = (0..<10).map { _ in Int.random(in: 1...numColors) }
         
         if num > 1 && num < 9 {

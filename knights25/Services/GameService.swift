@@ -23,9 +23,10 @@ protocol GameService {
     func applyMove(_ move: Move, to state: inout GameState) -> Int
     func isLevelFinished(_ state: GameState) -> Bool
     func isGameOver(_ state: GameState) -> Bool
-    func advanceToLevel(_ nextLevelNum: Int, state: inout GameState)
+    func advanceToLevel(_ nextLevelNum: Int, state: inout GameState) -> Bool
     func isSuperBonus(in state: GameState) -> Int
-    
+    func findCellForState(_ state: GameState, from src: (Int, Int) ) -> (Int, Int)
+   
     func bombTapped(to state: inout GameState)
     
     @discardableResult
@@ -37,7 +38,7 @@ protocol GameService {
     
     
     func shiftDrops(to state: inout GameState)
-    func clear13(for state: inout GameState) -> Int
+    func clearDiabloLevel(for state: inout GameState) -> Int
     
     func isValidMove(in state: GameState, from: (Int,Int), to: (Int,Int)) -> Int
     func validTargets(from: (Int,Int), in state: GameState) -> (merges: [(Int,Int)], bombEmpties: [(Int,Int)])
@@ -186,13 +187,21 @@ final class Game: GameService {
         return (merges, empties)
     }
     
-    func advanceToLevel(_ nextLevelNum: Int, state: inout GameState) {
+    func advanceToLevel(_ nextLevelNum: Int, state: inout GameState) -> Bool {
         
         let next = Level(for: nextLevelNum)
         state.level = next
         state.moves = 0
         state.score += next.num
-        
+        state.bonus += 1
+        var numc = 0
+        for r in 0..<state.board.count {
+            for c in 0..<state.board[r].count where state.board[r][c] > 0 {
+                numc += 1
+            }
+        }
+        return numc == 1
+ 
     }
     
     
@@ -238,8 +247,8 @@ final class Game: GameService {
             state.board[r1>2 ? r1-2 : r1 + 2][c1>1 ? c1-1 : c1 + 1] = 6
         }
         
-        if (numc > 2 && numc < 12) && numShift == 0 {
-            for _ in 0...100 {
+        if (numc > 2 && numc < 16) && numShift == 0 {
+            for _ in 0...32 {
                 let r1 = Int.random(in: 2...4)
                 let r2 = Int.random(in: 2...4)
                 let c1 = Int.random(in: 0...4)
@@ -258,6 +267,20 @@ final class Game: GameService {
         state.score += numc + numShift * state.level.num
     }
     
+    
+    func findCellForState(_ state: GameState, from p: (Int, Int) ) -> (Int, Int) {
+        var arr = [(Int, Int)]()
+        for r in 0..<state.board.count {
+            for c in 0..<state.board[r].count where state.board[r][c] == 0 {
+                let dr = abs(p.0 - r), dc = abs(p.1 - c)
+                if (dr == 1 && dc == 2) || (dr == 2 && dc == 1) {
+                    arr.append((r,c))
+                }
+            }
+        }
+        return arr.randomElement()!
+    }
+  
     
     @discardableResult
     func applyMove(_ move: Move, to state: inout GameState) -> Int {
@@ -303,7 +326,7 @@ final class Game: GameService {
     func isGameOver(_ state: GameState) -> Bool { false }
     
     
-    func clear13(for state: inout GameState) -> Int {
+    func clearDiabloLevel(for state: inout GameState) -> Int {
         guard state.level.diablo>0 else { return 0 }
         var nc = 0
         for r in 0..<state.level.diablo {
@@ -324,8 +347,9 @@ final class Game: GameService {
         }
         if nc==0 {
             state.bonus += state.level.diablo
+        } else {
+            state.level.lostKnights =  true
         }
-        
         return nc
         
     }

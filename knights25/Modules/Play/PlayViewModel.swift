@@ -68,7 +68,7 @@ final class PlayViewModel {
     }
     
     func showLevelView() {
-        onShowLevelView?(state.level, state.score)
+         onShowLevelView?(state.level, state.score)
     }
     
     func showFinalView() {
@@ -86,6 +86,10 @@ final class PlayViewModel {
     }
     
     
+    func findCellFor(_ src: (Int, Int) ) -> (Int, Int) {
+        return gameService.findCellForState(state, from: src)
+    }
+        
     func makeMove(_ move: Move) -> (Int, Int) {
         let srcColor = state.board[move.from.0][move.from.1]
         let dstColor = state.board[move.to.0][move.to.1]
@@ -108,7 +112,7 @@ final class PlayViewModel {
             state.bomb +=  1
             var d = state.level.num + state.bonus
             state.bonus +=  1
-            d += gameService.clear13(for: &state)
+            d += gameService.clearDiabloLevel(for: &state)
             
             state.score += d
             delta += d
@@ -166,7 +170,10 @@ final class PlayViewModel {
     }
     
     func nextLevel(_ best: Int? ) {
-        gameService.advanceToLevel(state.level.num + 1, state: &state)
+        let lvl = state.level.num + 1
+        if gameService.advanceToLevel( lvl, state: &state) {
+            state.status = .lastKnight
+        }
         if let best {
             state.level.bestScore = best
         }

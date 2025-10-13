@@ -317,6 +317,7 @@ final class LevelViewController: BaseViewController {
         }
     }
     
-    @objc private func continueTapped() { onContinue?(vm.nextLevelBestScore)
+    @objc private func continueTapped() {
+        onContinue?(vm.nextLevelBestScore)
     }
 }
