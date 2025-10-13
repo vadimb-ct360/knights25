@@ -170,13 +170,7 @@ final class HelpViewController: BaseViewController {
         }
         knights[0].alpha = 1
         
-        let v = UIImageView(image: UIImage(named: "knight_3"))
-        v.frame = frameForCell(0, 2, pad: 0.9)
-        card.addSubview(v)
-        let v2 = UIImageView(image: UIImage(named: "knight_3"))
-        v2.frame = frameForCell(0, 0, pad: 0.9)
-        card.addSubview(v2)
-        
+         
     }
     
     private func frameForCell(_ r: Int, _ c: Int, pad: CGFloat = 1.0) -> CGRect {

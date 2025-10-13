@@ -386,8 +386,7 @@ final class Game: GameService {
     private func generateBoard(size: Int, numColors: Int) -> [[Int]] {
         var b = Array(repeating: Array(repeating: 0, count: size), count: size)
         for r in 0..<size { for c in 0..<size { b[r][c] = Int.random(in: 1...numColors) } }
-        b[1][2] = 0
-        //    b[3][3] = 0
+        b[2][1] = 0
         return b
     }
 }

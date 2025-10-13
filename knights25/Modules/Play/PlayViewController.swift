@@ -153,6 +153,7 @@ final class PlayViewController: BaseViewController {
             boardView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 5.0/6.0),
             boardView.heightAnchor.constraint(equalTo: boardView.widthAnchor)
         ])
+        
         boardView.addSubview(bgImageView)
         boardView.clipsToBounds = false
         NSLayoutConstraint.activate([
@@ -658,6 +659,12 @@ final class PlayViewController: BaseViewController {
     
         }
         
+        if s.level.diablo>0 || s.level.isCleaning || s.level.num>25 || s.level.num != 28 {
+            bgImageView.image = UIImage(named: "board")
+          } else {
+            bgImageView.image = UIImage(named: "bg_19")
+        }
+        
         
         renderDrops(s.level.drops)
         render(state: s)
@@ -778,8 +785,19 @@ final class PlayViewController: BaseViewController {
             tapHighlightsTimer?.invalidate()
             clearDragHighlights()
             showDragHighlights(from: piece)
+            let b = UIImageView(image: UIImage(named: "bubble"))
+            piece.addSubview(b)
+            let newSize = CGSize(width: piece.bounds.width * 1.42,
+                                 height: piece.bounds.height * 1.42)
+            b.bounds = CGRect(origin: .zero, size: newSize)
+            b.center = CGPoint(x: piece.bounds.midX, y: piece.bounds.midY )
             
+
         case .ended, .cancelled, .failed:
+            piece.subviews.forEach {
+                $0.removeFromSuperview()
+            }
+      
             tapHighlightsTimer?.invalidate()
             clearDragHighlights()
         default:
@@ -992,6 +1010,7 @@ final class PlayViewController: BaseViewController {
             clearDragHighlights()
             piece.startCenter = piece.center
             piece.layer.zPosition = 11
+            piece.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
             showDragHighlights(from: piece)
             
         case .changed:
@@ -1000,11 +1019,15 @@ final class PlayViewController: BaseViewController {
             
         case .ended, .cancelled, .failed:
             piece.layer.zPosition = 0
+       
             clearDragHighlights()
             
             let p = gr.location(in: boardView)
             guard let dst = indexForPoint(p) else {
-                UIView.animate(withDuration: 0.22) { piece.center = piece.startCenter }
+                UIView.animate(withDuration: 0.22) {
+                    piece.transform = .identity
+                    piece.center = piece.startCenter
+                }
                 return
             }
             
@@ -1019,6 +1042,7 @@ final class PlayViewController: BaseViewController {
                 
                 UIView.animate(withDuration: 0.15,
                                animations: {
+                    piece.transform = .identity
                     piece.center = cellCenter
                 }, completion: { _ in
                     if legal>1 {
@@ -1048,7 +1072,10 @@ final class PlayViewController: BaseViewController {
                 
                 playStarBurst(at: cellCenter, count: 9, imageName: "bonus")
             } else {
-                UIView.animate(withDuration: 0.22) { piece.center = piece.startCenter }
+                UIView.animate(withDuration: 0.22) {
+                    piece.transform = .identity
+                    piece.center = piece.startCenter
+                }
             }
         default: break
         }
@@ -1208,8 +1235,7 @@ final class PlayViewController: BaseViewController {
         let removed = state.level.lostKnights
         
         let brush = UIImageView(image: UIImage(named: removed ? "flame" : "flame_pink"))
-        brush.frame = CGRect(x: 0, y: 3*s, width: s*5, height: s*7)
-        brush.alpha = 0.9
+        brush.frame = CGRect(x: 0, y: 2*s, width: s*5, height: s*7)
         boardView.addSubview(brush)
         view.bringSubviewToFront(brush)
         
@@ -1219,8 +1245,8 @@ final class PlayViewController: BaseViewController {
                        delay: 0.0,
                        animations: {
             
-            self.inkView.transform = CGAffineTransform(translationX: 0, y: -10).scaledBy(x: 1, y: 0.5)
-            brush.transform = CGAffineTransform(translationX: 0, y: -4*s)
+            self.inkView.transform = CGAffineTransform(translationX: 0, y: -10).scaledBy(x: 0.5, y: 0.5)
+            brush.transform = CGAffineTransform(translationX: 0, y: -5*s)
             for r in 0..<rows {
                 for c in 0..<cols {
                     let id = self.state.board[r][c]
@@ -1239,8 +1265,8 @@ final class PlayViewController: BaseViewController {
                            delay: 0.0,
                            animations: {
                 
-                self.inkView.transform = CGAffineTransform(translationX: 0, y: -s).scaledBy(x: 1, y: 0.1)
-                brush.transform = CGAffineTransform(translationX: 0, y: -10*s)
+                self.inkView.transform = CGAffineTransform(translationX: 0, y: -s).scaledBy(x: 0.2, y: 0.1)
+                brush.transform = CGAffineTransform(translationX: 0, y: -9*s)
             }, completion: { _ in
                 brush.removeFromSuperview()
                 self.inkView.removeFromSuperview()
