@@ -53,14 +53,14 @@ struct Level: Equatable, Codable {
             1, 10, 13, 1, 0,
             14, 16, 15, 4, 0,
         ]
-        
+        // 1 7 18 23 28
         let iNum = [
             0, 0, 8, 0, 2,
             6,  15,  3, 1, 0,
             17, 1, 13, 1, 0,
             7, 16, 12, 1,  0,
             1, 18, 10, 1, 0,
-            11, 14, 4, 5, 0,
+            11, 14, 4, 5, 9,
         ]
         
         let moveQuota: Int = n<moves.count ? moves[n] : 10
@@ -86,7 +86,7 @@ struct Level: Equatable, Codable {
         self.isCleaning = num==10 || num==15 || num==20 || num==25 || num>=30 || num==2 || num==4
         self.drops = drops
         self.ground = n<gNum.count ? "bg_\(gNum[n])" : "bg_0"
-        self.icon = n<iNum.count ? "level_\(iNum[n])" : "level_0"
+        self.icon = n<iNum.count ? "level_\(iNum[n])" : "level_9"
         self.levelName = n<names.count ? names[n] : "Buba Diop"
      }
 }

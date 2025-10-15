@@ -36,7 +36,7 @@ final class PlayViewController: BaseViewController {
     private let bombButton = UIButton(type: .custom)
     private let bombLabel  = UILabel()
     private let lastColorKnight = UIButton(type: .custom)
-    private let lastColorLabel  = UILabel()
+    private let lastColorLabel  = RoundedLabel()
     
     
     private let movesNumberLabel = UILabel()
@@ -194,9 +194,9 @@ final class PlayViewController: BaseViewController {
         bonusLabel.textColor = .brown
         bonusLabel.layer.masksToBounds = true
         
-        bonusLabel.backgroundColor = UIColor(cgColor: cg)
         colorsStrip.backgroundColor = UIColor(cgColor: cg)
         
+        bonusLabel.backgroundColor = UIColor(cgColor: cg)
         bonusLabel.layer.cornerRadius = 12
         
         bonusLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -228,11 +228,15 @@ final class PlayViewController: BaseViewController {
         lastColorKnight.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(lastColorKnight)
         
-        
         lastColorLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(lastColorLabel)
         lastColorLabel.text = ""
         lastColorLabel.textColor = UIColor.white.withAlphaComponent(0.9)
+        lastColorLabel.backgroundColor = UIColor(cgColor: CGColor(gray: 0, alpha: 0.3))
+        lastColorLabel.layer.masksToBounds = true
+   
+        lastColorLabel.layer.cornerRadius = 13
+     
         lastColorLabel.textAlignment = .center
         
         
@@ -319,7 +323,8 @@ final class PlayViewController: BaseViewController {
             
             lastColorLabel.centerXAnchor.constraint(equalTo: lastColorKnight.centerXAnchor),
             lastColorLabel.centerYAnchor.constraint(equalTo: lastColorKnight.centerYAnchor, constant: 5),
-            
+            lastColorLabel.widthAnchor.constraint(equalTo: lastColorLabel.heightAnchor),
+      
             
             bonusLabel.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 42),
             bonusLabel.trailingAnchor.constraint(equalTo: g.trailingAnchor, constant: -16),
@@ -381,11 +386,13 @@ final class PlayViewController: BaseViewController {
         colorsStrip.layoutIfNeeded()
         bonusLabel.layoutIfNeeded()
         scorePill.layoutIfNeeded()
-        
+        lastColorLabel.layoutIfNeeded()
+     
         colorsStrip.layer.cornerRadius = colorsStrip.bounds.height / 2
         bonusLabel.layer.cornerRadius = bonusLabel.bounds.height / 2
         scorePill.layer.cornerRadius = scorePill.bounds.height / 2
-        
+    //    lastColorLabel.layer.cornerRadius = lastColorLabel.bounds.height / 2
+        lastColorLabel.layer.cornerRadius = 20
     }
     
     
@@ -414,9 +421,9 @@ final class PlayViewController: BaseViewController {
         NSLayoutConstraint.activate([
             bombButton.centerXAnchor.constraint(equalTo: boardView.centerXAnchor),
             bombButton.topAnchor.constraint(equalTo: boardView.bottomAnchor, constant: 75),
-            bombButton.heightAnchor.constraint(equalToConstant: 72),
-            bombButton.widthAnchor.constraint(equalTo: bombButton.heightAnchor, multiplier: 2.0 ),
-            
+            bombButton.widthAnchor.constraint(equalToConstant: 128 ),
+            bombButton.heightAnchor.constraint(equalToConstant: 85),
+          
             bombLabel.centerXAnchor.constraint(equalTo: bombButton.centerXAnchor, constant: -7),
             bombLabel.centerYAnchor.constraint(equalTo: bombButton.centerYAnchor),
         ])
@@ -500,8 +507,8 @@ final class PlayViewController: BaseViewController {
     
     
     func playLastKnight() {
-        dropsPill.isHidden = true
-        inkView.isHidden = true
+        dropsPill.alpha = 0
+        inkView.alpha  = 0
         lockUI()
         
         if let lastKnight = boardView.subviews.compactMap({ $0 as? KnightView }).first {
@@ -542,16 +549,19 @@ final class PlayViewController: BaseViewController {
         
         
         if number>0 {
-            let img = UIImage(named: "k_\(lastColor)")?.withRenderingMode(.alwaysOriginal)
+            let img = UIImage(named: "knight_\(lastColor)")?.withRenderingMode(.alwaysOriginal)
             lastColorKnight.setImage(img, for: .normal)
             lastColorLabel.text =  "\(number)"
             lastColorLabel.isHidden = false
+            lastColorKnight.alpha = 0.85
+        
             dumpControls(lastColorKnight, lastColorLabel, delay: 0.3)
         } else {
             let img = UIImage(named: "help")?.withRenderingMode(.alwaysOriginal)
             lastColorKnight.setImage(img, for: .normal)
+            lastColorKnight.alpha = 1
             lastColorLabel.isHidden = true
-        }
+       }
         
     
         
@@ -652,17 +662,18 @@ final class PlayViewController: BaseViewController {
             inkView.layer.cornerRadius = 13
             inkView.layer.borderColor = CGColor(red: 0.2, green: 0.5, blue: 0.1, alpha: 0.9)
             inkView.layer.borderWidth = 7
-            
+            inkView.alpha  = 1
+      
             
             boardView.addSubview(inkView)
        //     boardView.sendSubviewToBack(inkView)
     
         }
         
-        if s.level.diablo>0 || s.level.isCleaning || s.level.num>25 || s.level.num != 28 {
-            bgImageView.image = UIImage(named: "board")
-          } else {
+        if Set([1, 7, 18, 23, 28]).contains(s.level.num) {
             bgImageView.image = UIImage(named: "bg_19")
+        } else {
+            bgImageView.image = UIImage(named: "board")
         }
         
         
@@ -1370,11 +1381,9 @@ final class PlayViewController: BaseViewController {
         }, completion: { _ in
             self.playSound("level")
             self.viewModel.showFinalView()
+        
         })
-        
-        
-        
-    }
+     }
     
     
     private func unlockUI() {

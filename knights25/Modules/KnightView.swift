@@ -18,6 +18,16 @@ final class PaddedLabel: UILabel {
     }
 }
 
+final class RoundedLabel: UILabel {
+    var insets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+    override func drawText(in rect: CGRect) { super.drawText(in: rect.inset(by: insets)) }
+    override var intrinsicContentSize: CGSize {
+        let s = super.intrinsicContentSize
+        return CGSize(width: s.width + insets.left + insets.right,
+                      height: s.height + insets.top + insets.bottom)
+    }
+}
+
 final class KnightView: UIImageView {
     var index: (r:Int,c:Int)
     let colorId: Int

@@ -11,6 +11,7 @@ import UIKit
 final class PlayViewModel {
     
     private let gameService: GameService
+    private let userService: UserService = DefaultUserService()
     private(set) var state: GameState!
     
     // setup in Coordinator
@@ -33,8 +34,28 @@ final class PlayViewModel {
     }
     
     func start(levelNumber: Int = 1) {
+        getStartInfo()
         state = gameService.initGame(levelNumber: levelNumber)
         onStateChanged?(state)
+    }
+    
+    
+    func getStartInfo() {
+        // Restore uid if we have one and read info from server
+        let stored = UserDefaults.standard.string(forKey: "userId")
+        userService.fetchUser(uid: stored) {  result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let dto):
+                    // Persist (server may issue a new id if none was passed)
+                    UserDefaults.standard.setValue(dto.userId, forKey: "userId")
+                    self.applyUserBootstrap(bestLevel: dto.bestLevelScore)
+                case .failure(let err):
+                    self.applyUserBootstrap(bestLevel: "77")
+                    print("user.php error:", err)
+                }
+            }
+        }
     }
     
     func exitToBest() {

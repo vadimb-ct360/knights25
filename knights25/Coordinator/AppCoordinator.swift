@@ -2,7 +2,6 @@ import UIKit
 final class AppCoordinator {
     private let window: UIWindow
     private let gameService: GameService
-    private let userService: UserService = DefaultUserService()
     private var nav: UINavigationController?
     
     init(window: UIWindow, gameService: GameService) {
@@ -23,27 +22,13 @@ final class AppCoordinator {
         vm.start(levelNumber: 1)
         
         
-        // Restore uid if we have one and read info from server
-        let stored = UserDefaults.standard.string(forKey: "userId")
-        userService.fetchUser(uid: stored) {  result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let dto):
-                    // Persist (server may issue a new id if none was passed)
-                    UserDefaults.standard.setValue(dto.userId, forKey: "userId")
-                    vm.applyUserBootstrap(bestLevel: dto.bestLevelScore)
-                case .failure(let err):
-                    vm.applyUserBootstrap(bestLevel: "77")
-                    print("user.php error:", err)
-                }
-            }
-        }
-        
+         
         let nav = UINavigationController(rootViewController: vc)
         self.nav = nav
         window.rootViewController = nav
         window.makeKeyAndVisible()
     }
+    
     
     func bindVM(_ vm: PlayViewModel) {
         
